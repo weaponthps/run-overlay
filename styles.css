@@ -1,0 +1,76 @@
+:root {
+  --border: #bdbdbd;
+  --text: #111;
+  --muted: #444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: transparent; /* important later for overlay */
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+}
+
+.card {
+  width: 1200px;           /* you can change later */
+  height: 420px;           /* you can change later */
+  background: white;
+  border: 2px solid var(--border);
+  padding: 18px 18px 10px 18px;
+}
+
+.track-area {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.track {
+  position: absolute;
+  left: -80px;
+  right: -40px;
+  top: 150px;
+  height: 14px;
+  background: #000;
+  border-radius: 999px;
+}
+
+/* Green “completed” segment (we’ll make this dynamic later) */
+.track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 14px;
+  width: 25%;
+  background: #18c43c;
+  border-radius: 999px;
+}
+
+.runner {
+  position: absolute;
+  top: 98px;
+  left: 20%;
+  font-size: 56px;
+  transform: translateX(-50%);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 12px 24px 0 24px;
+}
+
+.label {
+  font-size: 18px;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.value {
+  font-size: 40px;
+  line-height: 1.05;
+}
