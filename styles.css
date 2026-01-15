@@ -12,6 +12,14 @@ html, body {
   overflow: hidden; /* <- kills scrollbars */
 }
 
+.runner {
+  position: absolute;
+  top: 98px;
+  left: 0;
+  font-size: 56px;
+
+  transform: scaleX(-1); /* 👈 flips runner to face right */
+}
 
 * { box-sizing: border-box; }
 
@@ -83,4 +91,5 @@ body {
   font-size: 40px;
   line-height: 1.05;
 }
+
 
