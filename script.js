@@ -19,13 +19,19 @@ const startTime = Date.now();
 
 // Render function: moves runner left → right
 function render(progress) {
-  // Clamp progress between 0 and 1
   progress = Math.max(0, Math.min(1, progress));
 
-  // Move runner from 10% to 90% across the overlay
-  const leftPercent = 10 + progress * 80;
+  // Adjust these if you tweak the track layout
+  const TRACK_START_PERCENT = 0;
+  const TRACK_END_PERCENT = 92;
+
+  const leftPercent =
+    TRACK_START_PERCENT +
+    progress * (TRACK_END_PERCENT - TRACK_START_PERCENT);
+
   runner.style.left = `${leftPercent}%`;
 }
+
 
 // Main animation loop
 function tick() {
@@ -44,6 +50,7 @@ function tick() {
 
 // Start animation
 tick();
+
 
 
 
