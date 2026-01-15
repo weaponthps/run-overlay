@@ -1,61 +1,57 @@
 // ===============================
-// RUN OVERLAY – SCRIPT.JS (V1)
+// RUN OVERLAY – SCRIPT.JS (V1.1)
+// Stops at finish + shows "Run complete"
 // ===============================
 
 // ====== CONFIG (EDIT THESE) ======
-const GOAL_TIME_MINUTES = 5;   // total planned run time
+const GOAL_TIME_MINUTES = .5;   // planned run time
 const START_PROGRESS = 0.0;     // 0 = start, 1 = finish
-
 // ===============================
 
-// Convert goal time to seconds
 const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
 
-// Grab runner element
 const runner = document.getElementById("runner");
 const trackProgress = document.getElementById("trackProgress");
+const completeBadge = document.getElementById("completeBadge");
 
-// Internal timing state
 const startTime = Date.now();
+let completed = false;
 
-// Render function: moves runner left → right
+// Adjust these if you tweak the track layout
+const TRACK_START_PERCENT = 0;
+const TRACK_END_PERCENT = 92;
+
 function render(progress) {
   progress = Math.max(0, Math.min(1, progress));
-
-  const TRACK_START_PERCENT = 0;
-  const TRACK_END_PERCENT = 92;
 
   const leftPercent =
     TRACK_START_PERCENT +
     progress * (TRACK_END_PERCENT - TRACK_START_PERCENT);
 
   runner.style.left = `${leftPercent}%`;
-
-  // Green fill matches progress (0% -> 100%)
   trackProgress.style.width = `${progress * 100}%`;
 }
 
+function showComplete() {
+  completeBadge.style.display = "block";
+  completeBadge.style.animation = "popIn 250ms ease-out";
+}
 
-
-// Main animation loop
 function tick() {
-  const now = Date.now();
-  const elapsedMs = now - startTime;
-  const elapsedSeconds = elapsedMs / 1000;
+  if (completed) return; // hard stop animation loop once complete
 
-  // Calculate progress based on time
+  const elapsedSeconds = (Date.now() - startTime) / 1000;
   const progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
 
-  render(progress);
+  if (progress >= 1) {
+    render(1);
+    showComplete();
+    completed = true;
+    return;
+  }
 
-  // Keep animating
+  render(progress);
   requestAnimationFrame(tick);
 }
 
-// Start animation
 tick();
-
-
-
-
-
