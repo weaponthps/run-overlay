@@ -1,11 +1,17 @@
 // ===============================
-// RUN OVERLAY – SCRIPT.JS (V1.1)
+// RUN OVERLAY – SCRIPT.JS (V1.2)
 // Stops at finish + shows "Run complete"
+// Green fill stays slightly behind runner back foot
 // ===============================
 
+console.log("SCRIPT LOADED");
+window.onerror = (msg, src, line, col) =>
+  console.log("ERROR:", msg, "line:", line, "col:", col);
+
 // ====== CONFIG (EDIT THESE) ======
-const GOAL_TIME_MINUTES = .2;   // planned run time
-const START_PROGRESS = 0.0;     // 0 = start, 1 = finish
+const GOAL_TIME_MINUTES = 0.2;   // planned run time (0.2 = 12 seconds for testing)
+const START_PROGRESS = 0.0;      // 0 = start, 1 = finish
+const BACK_FOOT_OFFSET_PX = 22;  // pull green line back behind runner
 // ===============================
 
 const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
@@ -14,43 +20,31 @@ const runner = document.getElementById("runner");
 const trackProgress = document.getElementById("trackProgress");
 const completeBadge = document.getElementById("completeBadge");
 
-const startTime = Date.now();
-let completed = false;
-
-// Adjust these if you tweak the track layout
-const TRACK_START_PERCENT = 0;
-const TRACK_END_PERCENT = 92;
-
 const trackEl = document.querySelector(".track");
 const trackAreaEl = document.querySelector(".track-area");
+
+const startTime = Date.now();
+let completed = false;
 
 function render(progress) {
   progress = Math.max(0, Math.min(1, progress));
 
-  // Fill bar is always perfect: 0% -> 100% of the track
-  // Offset green bar slightly behind the runner (back foot)
-const BACK_FOOT_OFFSET_PX = 22;
-
-const trackWidthPx = trackRect.width;
-const greenWidthPx = Math.max(
-  0,
-  progress * trackWidthPx - BACK_FOOT_OFFSET_PX
-);
-
-trackProgress.style.width = `${greenWidthPx}px`;
-
-
-  // Now place the runner based on the actual track element position/width
+  // Measure track + area FIRST
   const trackRect = trackEl.getBoundingClientRect();
   const areaRect = trackAreaEl.getBoundingClientRect();
 
-  // x position in pixels relative to the track-area
+  // Runner position: place runner at the progress point along the track
   const trackLeftPx = trackRect.left - areaRect.left;
   const x = trackLeftPx + (progress * trackRect.width);
-
   runner.style.left = `${x}px`;
-}
 
+  // Green bar: width based on track width, pulled back a bit
+  const greenWidthPx = Math.max(
+    0,
+    progress * trackRect.width - BACK_FOOT_OFFSET_PX
+  );
+  trackProgress.style.width = `${greenWidthPx}px`;
+}
 
 function showComplete() {
   completeBadge.style.display = "block";
@@ -58,7 +52,7 @@ function showComplete() {
 }
 
 function tick() {
-  if (completed) return; // hard stop animation loop once complete
+  if (completed) return;
 
   const elapsedSeconds = (Date.now() - startTime) / 1000;
   const progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
@@ -75,6 +69,3 @@ function tick() {
 }
 
 tick();
-
-
-
