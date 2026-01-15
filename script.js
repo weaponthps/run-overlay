@@ -9,7 +9,7 @@ window.onerror = (msg, src, line, col) =>
   console.log("ERROR:", msg, "line:", line, "col:", col);
 
 // ====== CONFIG (EDIT THESE) ======
-const GOAL_TIME_MINUTES = 0.2;   // planned run time (0.2 = 12 seconds for testing)
+const GOAL_TIME_MINUTES = 1;   // planned run time
 const START_PROGRESS = 0.0;      // 0 = start, 1 = finish
 const BACK_FOOT_OFFSET_PX = 22;  // pull green line back behind runner
 // ===============================
@@ -69,3 +69,4 @@ function tick() {
 }
 
 tick();
+
