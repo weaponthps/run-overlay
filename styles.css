@@ -51,21 +51,18 @@ body {
   right: -40px;
   top: 150px;
   height: 14px;
-  background: #000;
+  background: #000;       /* full black track */
+  border-radius: 999px;
+  overflow: hidden;       /* keeps green inside rounded ends */
+}
+
+.track-progress {
+  height: 100%;
+  width: 0%;              /* starts empty */
+  background: #18c43c;    /* green fill */
   border-radius: 999px;
 }
 
-/* Green “completed” segment (we’ll make this dynamic later) */
-.track::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 14px;
-  width: 25%;
-  background: #18c43c;
-  border-radius: 999px;
-}
 
 .runner {
   position: absolute;
@@ -91,5 +88,6 @@ body {
   font-size: 40px;
   line-height: 1.05;
 }
+
 
 
