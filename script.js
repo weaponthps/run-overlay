@@ -21,16 +21,26 @@ let completed = false;
 const TRACK_START_PERCENT = 0;
 const TRACK_END_PERCENT = 92;
 
+const trackEl = document.querySelector(".track");
+const trackAreaEl = document.querySelector(".track-area");
+
 function render(progress) {
   progress = Math.max(0, Math.min(1, progress));
 
-  const leftPercent =
-    TRACK_START_PERCENT +
-    progress * (TRACK_END_PERCENT - TRACK_START_PERCENT);
-
-  runner.style.left = `${leftPercent}%`;
+  // Fill bar is always perfect: 0% -> 100% of the track
   trackProgress.style.width = `${progress * 100}%`;
+
+  // Now place the runner based on the actual track element position/width
+  const trackRect = trackEl.getBoundingClientRect();
+  const areaRect = trackAreaEl.getBoundingClientRect();
+
+  // x position in pixels relative to the track-area
+  const trackLeftPx = trackRect.left - areaRect.left;
+  const x = trackLeftPx + (progress * trackRect.width);
+
+  runner.style.left = `${x}px`;
 }
+
 
 function showComplete() {
   completeBadge.style.display = "block";
@@ -55,3 +65,4 @@ function tick() {
 }
 
 tick();
+
