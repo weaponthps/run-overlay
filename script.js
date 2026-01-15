@@ -24,7 +24,7 @@ function tick() {
     const elapsedSeconds = elapsedMs / 1000;
 
     let progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
-    progress = Math.max(0, Math.min(1, progress)); // clamp 0..1
+    progress = Math.max(0, Math.min(1, progress)); // clamp 0.1
 
     render(progress);
   }
@@ -40,6 +40,7 @@ setInterval(() => {
   if (progress > 1) progress = 0;
   render();
 }, 300);
+
 
 
 
