@@ -3,15 +3,36 @@
 
 const runner = document.getElementById("runner");
 
-let progress = 0.20; // start at 20%
+// SETTINGS (edit these)
+const GOAL_TIME_SECONDS = 40 * 60; // 40 minutes
+const START_PROGRESS = 0.0;        // 0.0 = start, 1.0 = finish
 
-function render() {
-  // Move runner left->right across the card (10% to 90%)
-  const leftPercent = 10 + progress * 80;
+// Internal state
+const startTime = Date.now();
+let paused = false;
+let pausedAt = 0;
+let totalPausedMs = 0;
+
+function render(progress) {
+  const leftPercent = 10 + progress * 80; // 10% to 90%
   runner.style.left = `${leftPercent}%`;
 }
 
-render();
+function tick() {
+  if (!paused) {
+    const elapsedMs = Date.now() - startTime - totalPausedMs;
+    const elapsedSeconds = elapsedMs / 1000;
+
+    let progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
+    progress = Math.max(0, Math.min(1, progress)); // clamp 0..1
+
+    render(progress);
+  }
+  requestAnimationFrame(tick);
+}
+
+tick();
+
 
 // Demo: animate progress slowly so you can SEE it working
 setInterval(() => {
