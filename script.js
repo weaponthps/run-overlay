@@ -4,7 +4,7 @@
 // ===============================
 
 // ====== CONFIG (EDIT THESE) ======
-const GOAL_TIME_MINUTES = .5;   // planned run time
+const GOAL_TIME_MINUTES = .2;   // planned run time
 const START_PROGRESS = 0.0;     // 0 = start, 1 = finish
 // ===============================
 
@@ -65,4 +65,5 @@ function tick() {
 }
 
 tick();
+
 
