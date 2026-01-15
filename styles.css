@@ -62,9 +62,8 @@ body {
 .runner {
   position: absolute;
   top: 98px;
-  left: 20%;
+  left: 0;
   font-size: 56px;
-  transform: translateX(-50%);
 }
 
 .stats {
@@ -84,3 +83,4 @@ body {
   font-size: 40px;
   line-height: 1.05;
 }
+
