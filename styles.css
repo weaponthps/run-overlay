@@ -65,13 +65,13 @@ body {
 
 .track {
   position: absolute;
-  left: -80px;
-  right: -40px;
+  left: 18px;
+  right: 18px;
   top: 150px;
   height: 14px;
-  background: #000;       /* full black track */
+  background: #000;
   border-radius: 999px;
-  overflow: hidden;       /* keeps green inside rounded ends */
+  overflow: hidden;
 }
 
 .track-progress {
@@ -106,6 +106,7 @@ body {
   font-size: 40px;
   line-height: 1.05;
 }
+
 
 
 
