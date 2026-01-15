@@ -4,7 +4,7 @@
 const runner = document.getElementById("runner");
 
 // SETTINGS (edit these)
-const GOAL_TIME_SECONDS = 20 * 60; // 40 minutes
+const GOAL_TIME_SECONDS = 40 * 60; // 40 minutes
 const START_PROGRESS = 0.0;        // 0.0 = start, 1.0 = finish
 
 // Internal state
@@ -36,8 +36,9 @@ tick();
 
 // Demo: animate progress slowly so you can SEE it working
 setInterval(() => {
-  progress += 0.05;
+  progress += 0.01;
   if (progress > 1) progress = 0;
   render();
 }, 300);
+
 
