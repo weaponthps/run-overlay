@@ -13,6 +13,7 @@ const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
 
 // Grab runner element
 const runner = document.getElementById("runner");
+const trackProgress = document.getElementById("trackProgress");
 
 // Internal timing state
 const startTime = Date.now();
@@ -21,7 +22,6 @@ const startTime = Date.now();
 function render(progress) {
   progress = Math.max(0, Math.min(1, progress));
 
-  // Adjust these if you tweak the track layout
   const TRACK_START_PERCENT = 0;
   const TRACK_END_PERCENT = 92;
 
@@ -30,7 +30,11 @@ function render(progress) {
     progress * (TRACK_END_PERCENT - TRACK_START_PERCENT);
 
   runner.style.left = `${leftPercent}%`;
+
+  // Green fill matches progress (0% -> 100%)
+  trackProgress.style.width = `${progress * 100}%`;
 }
+
 
 
 // Main animation loop
@@ -50,6 +54,7 @@ function tick() {
 
 // Start animation
 tick();
+
 
 
 
