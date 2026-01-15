@@ -28,7 +28,17 @@ function render(progress) {
   progress = Math.max(0, Math.min(1, progress));
 
   // Fill bar is always perfect: 0% -> 100% of the track
-  trackProgress.style.width = `${progress * 100}%`;
+  // Offset green bar slightly behind the runner (back foot)
+const BACK_FOOT_OFFSET_PX = 22;
+
+const trackWidthPx = trackRect.width;
+const greenWidthPx = Math.max(
+  0,
+  progress * trackWidthPx - BACK_FOOT_OFFSET_PX
+);
+
+trackProgress.style.width = `${greenWidthPx}px`;
+
 
   // Now place the runner based on the actual track element position/width
   const trackRect = trackEl.getBoundingClientRect();
@@ -65,5 +75,6 @@ function tick() {
 }
 
 tick();
+
 
 
