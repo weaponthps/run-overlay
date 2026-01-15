@@ -25,6 +25,11 @@ html, body {
   display: none; /* hidden until complete */
 }
 
+@keyframes popIn {
+  0%   { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 .runner {
   position: absolute;
   top: 98px;
@@ -101,6 +106,7 @@ body {
   font-size: 40px;
   line-height: 1.05;
 }
+
 
 
 
