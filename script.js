@@ -4,7 +4,7 @@
 const runner = document.getElementById("runner");
 
 // SETTINGS (edit these)
-const GOAL_TIME_SECONDS = 120 * 60; // 40 minutes
+const GOAL_TIME_SECONDS = 20 * 60; // 40 minutes
 const START_PROGRESS = 0.0;        // 0.0 = start, 1.0 = finish
 
 // Internal state
@@ -40,3 +40,4 @@ setInterval(() => {
   if (progress > 1) progress = 0;
   render();
 }, 300);
+
