@@ -36,8 +36,9 @@ tick();
 
 // Demo: animate progress slowly so you can SEE it working
 setInterval(() => {
-  progress += 0.05;
+  progress += 0.30;
   if (progress > 1) progress = 0;
   render();
 }, 300);
+
 
