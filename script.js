@@ -1,47 +1,46 @@
-// V1: fake demo numbers + simple runner movement (time-based)
-// Later we'll replace with real values and SVG path positioning.
+// ===============================
+// RUN OVERLAY – SCRIPT.JS (V1)
+// ===============================
 
+// ====== CONFIG (EDIT THESE) ======
+const GOAL_TIME_MINUTES = 40;   // total planned run time
+const START_PROGRESS = 0.0;     // 0 = start, 1 = finish
+
+// ===============================
+
+// Convert goal time to seconds
+const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
+
+// Grab runner element
 const runner = document.getElementById("runner");
 
-// SETTINGS (edit these)
-const GOAL_TIME_SECONDS = 1 * 60; // 40 minutes
-const START_PROGRESS = 0.0;        // 0.0 = start, 1.0 = finish
-
-// Internal state
+// Internal timing state
 const startTime = Date.now();
-let paused = false;
-let pausedAt = 0;
-let totalPausedMs = 0;
 
+// Render function: moves runner left → right
 function render(progress) {
-  const leftPercent = 10 + progress * 80; // 10% to 90%
+  // Clamp progress between 0 and 1
+  progress = Math.max(0, Math.min(1, progress));
+
+  // Move runner from 10% to 90% across the overlay
+  const leftPercent = 10 + progress * 80;
   runner.style.left = `${leftPercent}%`;
 }
 
+// Main animation loop
 function tick() {
-  if (!paused) {
-    const elapsedMs = Date.now() - startTime - totalPausedMs;
-    const elapsedSeconds = elapsedMs / 1000;
+  const now = Date.now();
+  const elapsedMs = now - startTime;
+  const elapsedSeconds = elapsedMs / 1000;
 
-    let progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
-    progress = Math.max(0, Math.min(1, progress)); // clamp 0.1
+  // Calculate progress based on time
+  const progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
 
-    render(progress);
-  }
+  render(progress);
+
+  // Keep animating
   requestAnimationFrame(tick);
 }
 
+// Start animation
 tick();
-
-
-// Demo: animate progress slowly so you can SEE it working
-setInterval(() => {
-  progress += 0.01;
-  if (progress > 1) progress = 0;
-  render();
-}, 300);
-
-
-
-
-
