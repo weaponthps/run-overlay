@@ -39,7 +39,8 @@ setInterval(() => {
   progress += 0.30;
   if (progress > 1) progress = 0;
   render();
-}, 600);
+}, 1200);
+
 
 
 
