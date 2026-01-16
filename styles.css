@@ -131,7 +131,7 @@ body {
 
 .mile-marker .label {
   margin-top: 6px;
-  transform: translateX(-50%) translateX(-12px);
+  transform: translateX(-50%) translateX(-6px);
   font-size: 26px;
   font-weight: 700;
   white-space: nowrap;
@@ -150,6 +150,7 @@ body {
   color: #18c43c; /* green */
   -webkit-text-stroke: 2px #0f6e2a; /* darker green outline */
 }
+
 
 
 
