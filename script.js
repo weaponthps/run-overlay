@@ -46,6 +46,21 @@ function render(progress) {
     progress * trackRect.width - BACK_FOOT_OFFSET_PX
   );
   trackProgress.style.width = `${greenWidthPx}px`;
+
+  // Update mile marker completion states
+const markers = document.querySelectorAll(".mile-marker");
+
+markers.forEach(marker => {
+  const mile = Number(marker.dataset.mile);
+  const mileProgress = mile / TOTAL_MILES;
+
+  if (progress >= mileProgress) {
+    marker.classList.add("completed");
+  } else {
+    marker.classList.remove("completed");
+  }
+});
+
 }
 
 function showComplete() {
@@ -91,6 +106,8 @@ function buildMileMarkers() {
 
     const marker = document.createElement("div");
     marker.className = "mile-marker";
+    marker.dataset.mile = mile; // store mile number
+
     marker.style.left = `${xPx}px`;
 
     marker.innerHTML = `
@@ -107,6 +124,7 @@ window.addEventListener("resize", buildMileMarkers);
 buildMileMarkers();
 
 tick();
+
 
 
 
