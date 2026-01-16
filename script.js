@@ -25,6 +25,11 @@ const mileMarkersEl = document.getElementById("mileMarkers");
 const trackEl = document.querySelector(".track");
 const trackAreaEl = document.querySelector(".track-area");
 
+const startBtn = document.getElementById("startBtn");
+let running = false;
+let startTime = null;
+let rafId = null;
+
 const startTime = Date.now();
 let completed = false;
 
@@ -69,7 +74,7 @@ function showComplete() {
 }
 
 function tick() {
-  if (completed) return;
+  if (!running) return;
 
   const elapsedSeconds = (Date.now() - startTime) / 1000;
   const progress = START_PROGRESS + (elapsedSeconds / GOAL_TIME_SECONDS);
@@ -77,12 +82,29 @@ function tick() {
   if (progress >= 1) {
     render(1);
     showComplete();
-    completed = true;
+    running = false;
     return;
   }
 
   render(progress);
-  requestAnimationFrame(tick);
+  rafId = requestAnimationFrame(tick);
+}
+
+function startRun() {
+  if (running) return;
+
+  // Reset completion UI/state for a fresh run
+  completeBadge.style.display = "none";
+  completed = false;
+
+  // Set timer baseline and begin
+  startTime = Date.now();
+  running = true;
+
+  // Hide the button once started
+  startBtn.style.display = "none";
+
+  tick();
 }
 
 
@@ -119,11 +141,19 @@ function buildMileMarkers() {
   }
 }
 
+// Build markers and show runner at start, but DO NOT animate yet
+buildMileMarkers();
+render(START_PROGRESS);
+
+// Button click starts the run
+startBtn.addEventListener("click", startRun);
+
 window.addEventListener("resize", buildMileMarkers);
 
 buildMileMarkers();
 
 tick();
+
 
 
 
