@@ -131,12 +131,22 @@ body {
 .mile-marker .label {
   margin-top: 6px;
   transform: translateX(-50%);
-  font-size: 20px;
-  color: #6B6F6A;
-  opacity: 0.7;
-  font-weight: 600;
-  margin-top: 8px;
+  font-size: 26px;
+  font-weight: 700;
   white-space: nowrap;
+
+  color: #ffffff; /* white text */
+
+  /* Black outline / stroke */
+  -webkit-text-stroke: 2px #000000;
+  paint-order: stroke fill;
+
+  transition: color 0.25s ease, -webkit-text-stroke-color 0.25s ease;
+}
+
+.mile-marker.completed .label {
+  color: #18c43c; /* green */
+  -webkit-text-stroke: 2px #0f6e2a; /* darker green outline */
 }
 
 
