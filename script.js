@@ -12,6 +12,7 @@ window.onerror = (msg, src, line, col) =>
 const GOAL_TIME_MINUTES = .1;   // planned run time
 const START_PROGRESS = 0.0;      // 0 = start, 1 = finish
 const BACK_FOOT_OFFSET_PX = 18;  // pull green line back behind runner
+const TOTAL_MILES = 4; // set 1 to 10 (or more)
 // ===============================
 
 const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
@@ -19,6 +20,7 @@ const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
 const runner = document.getElementById("runner");
 const trackProgress = document.getElementById("trackProgress");
 const completeBadge = document.getElementById("completeBadge");
+const mileMarkersEl = document.getElementById("mileMarkers");
 
 const trackEl = document.querySelector(".track");
 const trackAreaEl = document.querySelector(".track-area");
@@ -68,7 +70,44 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
+
+function buildMileMarkers() {
+  // Clear old markers
+  mileMarkersEl.innerHTML = "";
+
+  // Measure track + track-area
+  const trackRect = trackEl.getBoundingClientRect();
+  const areaRect = trackAreaEl.getBoundingClientRect();
+
+  // Position the markers container to align exactly with the track
+  const trackLeftPx = trackRect.left - areaRect.left;
+  mileMarkersEl.style.left = `${trackLeftPx}px`;
+  mileMarkersEl.style.width = `${trackRect.width}px`;
+
+  // Create ticks for 1..TOTAL_MILES
+  for (let mile = 1; mile <= TOTAL_MILES; mile++) {
+    const ratio = mile / TOTAL_MILES;        // 0..1
+    const xPx = ratio * trackRect.width;     // pixel position
+
+    const marker = document.createElement("div");
+    marker.className = "mile-marker";
+    marker.style.left = `${xPx}px`;
+
+    marker.innerHTML = `
+      <div class="tick"></div>
+      <div class="label">${mile}</div>
+    `;
+
+    mileMarkersEl.appendChild(marker);
+  }
+}
+
+window.addEventListener("resize", buildMileMarkers);
+
+buildMileMarkers();
+
 tick();
+
 
 
 
