@@ -107,14 +107,34 @@ body {
   line-height: 1.05;
 }
 
+.mile-markers {
+  position: absolute;
+  left: 0;
+  top: 150px;           /* match .track top */
+  height: 60px;         /* room for labels */
+  pointer-events: none; /* so it won’t interfere with clicks */
+}
 
+.mile-marker {
+  position: absolute;
+  top: -10px;           /* puts tick slightly above track */
+  width: 0;
+}
 
+.mile-marker .tick {
+  width: 2px;
+  height: 34px;
+  background: #111;
+  opacity: 0.55;
+}
 
-
-
-
-
-
+.mile-marker .label {
+  margin-top: 6px;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: #555;
+  white-space: nowrap;
+}
 
 
 
