@@ -131,10 +131,14 @@ body {
 .mile-marker .label {
   margin-top: 6px;
   transform: translateX(-50%);
-  font-size: 14px;
-  color: #555;
+  font-size: 20px;
+  color: #6B6F6A;
+  opacity: 0.7;
+  font-weight: 600;
+  margin-top: 8px;
   white-space: nowrap;
 }
+
 
 
 
