@@ -55,6 +55,9 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const stateRef = ref(db, "runOverlay/state");
 
+console.log("FIREBASE INIT OK. DB:", firebaseConfig.databaseURL);
+console.log("LISTENING TO PATH: runOverlay/state");
+
 // ----- Run Plan + State (driven by Firebase) -----
 let totalMiles = 4;
 let goalTimeMinutes = 40;
@@ -204,11 +207,12 @@ function tick() {
 
 // ----- Firebase listener -----
 function attachFirebaseListener() {
-  onValue(stateRef, (snapshot) => {
+  onValue(
+  stateRef,
+  (snapshot) => {
     const s = snapshot.val();
     console.log("FIREBASE STATE:", s);
     if (!s) return;
-
     // Plan updates
     const newMiles = Number(s.planMiles ?? totalMiles);
     const newMinutes = Number(s.planMinutes ?? goalTimeMinutes);
@@ -224,6 +228,11 @@ function attachFirebaseListener() {
 
       if (!running) render(START_PROGRESS);
     }
+  },
+  (error) => {
+    console.log("FIREBASE onValue ERROR:", error);
+  }
+);
 
     // State transitions
     const status = String(s.status ?? "ready");
@@ -302,5 +311,6 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
 
 
