@@ -1,21 +1,17 @@
 // ===============================
-// RUN OVERLAY – SCRIPT.JS (V2.0)
+// RUN OVERLAY – SCRIPT.JS (V2.1 CLEAN)
 // Firebase RTDB real-time control (Apply / Start / Reset)
+// + Mile markers support 0.1 .. 26 miles
 // ===============================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  onValue,
-  update,
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
 console.log("SCRIPT LOADED", new Date().toISOString());
 window.onerror = (msg, src, line, col) =>
   console.log("ERROR:", msg, "line:", line, "col:", col);
 
-// ====== FIREBASE CONFIG (PASTE YOURS HERE) ======
+// ====== FIREBASE CONFIG ======
 const firebaseConfig = {
   apiKey: "AIzaSyCl6se0G2WrDNkwh0sTEOW0uFBvx-V6cQo",
   authDomain: "run-overlay.firebaseapp.com",
@@ -24,14 +20,12 @@ const firebaseConfig = {
   storageBucket: "run-overlay.firebasestorage.app",
   messagingSenderId: "511176060158",
   appId: "1:511176060158:web:a1e016f482a027556449af",
-  measurementId: "G-CB6KRXGDLX"
+  measurementId: "G-CB6KRXGDLX",
 };
-// ===============================================
 
-// ====== OVERLAY CONFIG (VISUAL TUNING) ======
-const START_PROGRESS = 0.0;     // 0 = start
-const BACK_FOOT_OFFSET_PX = 22; // green ends behind runner
-// ============================================
+// ====== VISUAL TUNING ======
+const START_PROGRESS = 0.0;      // 0 = start
+const BACK_FOOT_OFFSET_PX = 22;  // green ends behind runner
 
 // ----- DOM -----
 const runner = document.getElementById("runner");
@@ -47,10 +41,6 @@ const trackEl = document.querySelector(".track");
 const trackAreaEl = document.querySelector(".track-area");
 
 // ----- Firebase init -----
-if (!firebaseConfig || !firebaseConfig.projectId) {
-  console.log("Firebase config missing. Paste firebaseConfig into script.js.");
-}
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const stateRef = ref(db, "runOverlay/state");
@@ -58,29 +48,43 @@ const stateRef = ref(db, "runOverlay/state");
 console.log("FIREBASE INIT OK. DB:", firebaseConfig.databaseURL);
 console.log("LISTENING TO PATH: runOverlay/state");
 
-// ----- Run Plan + State (driven by Firebase) -----
-let totalMiles = 4;
-let goalTimeMinutes = 40;
+// ----- Run Plan + State (from Firebase) -----
+let totalMiles = 3.0;        // default until Firebase arrives
+let goalTimeMinutes = 30;    // default until Firebase arrives
 let goalTimeSeconds = goalTimeMinutes * 60;
 
 let running = false;
-let startTimeEpochMs = 0; // from Firebase when running
+let startTimeEpochMs = 0;
 let lastRunId = null;
 
-// ----- Helpers -----
+// ---------- Helpers ----------
 function formatGoalTime(minutes) {
-  // V1: show "MM:00" (you can upgrade to mm:ss later)
   const m = Math.max(0, Math.floor(minutes));
   return `${m}:00`;
 }
 
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
+
 function updatePlanUI() {
-  if (totalDistanceEl) totalDistanceEl.textContent = `${totalMiles.toFixed(1)} mi`;
+  if (totalDistanceEl) totalDistanceEl.textContent = `${Number(totalMiles).toFixed(1)} mi`;
   if (goalTimeEl) goalTimeEl.textContent = formatGoalTime(goalTimeMinutes);
 }
 
+// Mile marker strategy:
+// - < 1 mi : 0.1 ticks
+// - 1–10  : 1 mi ticks
+// - > 10  : 5 mi ticks (up to 26)
+function getMarkerSpec(miles) {
+  if (miles < 1) return { step: 0.1, maxLabel: miles };
+  if (miles <= 10) return { step: 1, maxLabel: Math.floor(miles) };
+  return { step: 5, maxLabel: Math.floor(miles / 5) * 5 };
+}
+
 function buildMileMarkers() {
-  if (!mileMarkersEl) return;
+  if (!mileMarkersEl || !trackEl || !trackAreaEl) return;
+
   mileMarkersEl.innerHTML = "";
 
   const trackRect = trackEl.getBoundingClientRect();
@@ -90,34 +94,12 @@ function buildMileMarkers() {
   mileMarkersEl.style.left = `${trackLeftPx}px`;
   mileMarkersEl.style.width = `${trackRect.width}px`;
 
-  let markerCount;
+  const miles = clamp(Number(totalMiles) || 0.1, 0.1, 26);
+  const { step, maxLabel } = getMarkerSpec(miles);
 
-  if (totalMiles < 1) {
-    markerCount = Math.round(totalMiles * 10); // 0.1 mile markers
-  } else if (totalMiles <= 10) {
-    markerCount = Math.floor(totalMiles); // 1 mile markers
-  } else {
-    markerCount = Math.floor(totalMiles / 5); // every 5 miles
-  }
-
-  for (let i = 1; i <= markerCount; i++) {
-    let label;
-    let ratio;
-
-    if (totalMiles < 1) {
-      label = (i / 10).toFixed(1);
-      ratio = (i / 10) / totalMiles;
-    } else if (totalMiles <= 10) {
-      label = i;
-      ratio = i / totalMiles;
-    } else {
-      label = i * 5;
-      ratio = (i * 5) / totalMiles;
-    }
-
-    // Guard against floating point overflow
-    ratio = Math.min(1, Math.max(0, ratio));
-
+  // Build ticks: step, step*2, ... up to maxLabel (never include 0)
+  for (let label = step; label <= maxLabel + 1e-9; label += step) {
+    const ratio = clamp(label / miles, 0, 1);
     const xPx = ratio * trackRect.width;
 
     const marker = document.createElement("div");
@@ -125,25 +107,24 @@ function buildMileMarkers() {
     marker.dataset.mile = String(label);
     marker.style.left = `${xPx}px`;
 
+    const labelText = step < 1 ? label.toFixed(1) : String(Math.round(label));
+
     marker.innerHTML = `
       <div class="tick"></div>
-      <div class="label">${label}</div>
+      <div class="label">${labelText}</div>
     `;
 
     mileMarkersEl.appendChild(marker);
   }
 }
 
-
-}
-
 function updateMileMarkerStates(progress) {
+  const miles = clamp(Number(totalMiles) || 0.1, 0.1, 26);
   const markers = document.querySelectorAll(".mile-marker");
-  const milesInt = Math.max(1, Math.round(totalMiles));
 
   markers.forEach((marker) => {
-    const mile = Number(marker.dataset.mile);
-    const mileProgress = mile / milesInt;
+    const labelMiles = Number(marker.dataset.mile);
+    const mileProgress = clamp(labelMiles / miles, 0, 1);
 
     if (progress >= mileProgress) marker.classList.add("completed");
     else marker.classList.remove("completed");
@@ -151,7 +132,7 @@ function updateMileMarkerStates(progress) {
 }
 
 function render(progress) {
-  progress = Math.max(0, Math.min(1, progress));
+  progress = clamp(progress, 0, 1);
 
   const trackRect = trackEl.getBoundingClientRect();
   const areaRect = trackAreaEl.getBoundingClientRect();
@@ -180,10 +161,9 @@ function resetOverlayVisuals() {
   completeBadge.style.display = "none";
   trackProgress.style.width = "0px";
 
-  // Put runner at start
+  buildMileMarkers();
   render(START_PROGRESS);
 
-  // Show Start button locally (optional)
   if (startBtn) {
     startBtn.style.display = "block";
     startBtn.textContent = "Start";
@@ -191,7 +171,6 @@ function resetOverlayVisuals() {
 }
 
 function startRunLocallyFrom(startMs) {
-  // Reset visuals for a clean run
   completeBadge.style.display = "none";
   trackProgress.style.width = "0px";
 
@@ -200,12 +179,9 @@ function startRunLocallyFrom(startMs) {
   startTimeEpochMs = startMs;
   running = true;
 
-  // Hide Start button while running
   if (startBtn) startBtn.style.display = "none";
 
-  // Render first frame
   render(START_PROGRESS);
-
   requestAnimationFrame(tick);
 }
 
@@ -220,7 +196,6 @@ function tick() {
     showComplete();
     running = false;
 
-    // Optional: show button again locally
     if (startBtn) {
       startBtn.style.display = "block";
       startBtn.textContent = "Restart";
@@ -239,15 +214,16 @@ function attachFirebaseListener() {
     (snapshot) => {
       const s = snapshot.val();
       console.log("FIREBASE STATE:", s);
+
       if (!s) return;
 
-      const newMiles = Number(s.planMiles ?? totalMiles);
-      const newMinutes = Number(s.planMinutes ?? goalTimeMinutes);
+      const newMiles = clamp(Number(s.planMiles ?? totalMiles), 0.1, 26);
+      const newMinutes = Math.max(1, Number(s.planMinutes ?? goalTimeMinutes));
 
       const planChanged = newMiles !== totalMiles || newMinutes !== goalTimeMinutes;
       if (planChanged) {
-        totalMiles = Math.max(1, newMiles);
-        goalTimeMinutes = Math.max(1, newMinutes);
+        totalMiles = newMiles;
+        goalTimeMinutes = newMinutes;
         goalTimeSeconds = goalTimeMinutes * 60;
 
         updatePlanUI();
@@ -279,7 +255,7 @@ function attachFirebaseListener() {
   );
 }
 
-// ----- Local Start button writes to Firebase -----
+// ----- Writes -----
 async function writeStartToFirebase() {
   const now = Date.now();
   const nextRunId = (lastRunId ?? 0) + 1;
@@ -305,16 +281,13 @@ async function writeResetToFirebase() {
 window.addEventListener("load", () => {
   console.log("WINDOW LOADED");
 
-  // Initial UI
   updatePlanUI();
   buildMileMarkers();
   render(START_PROGRESS);
 
-  // Listen to Firebase
   console.log("ATTACHING FIREBASE LISTENER NOW");
   attachFirebaseListener();
 
-  // Local button behavior (writes to Firebase so overlay + TikTok stay consistent)
   if (startBtn) {
     startBtn.addEventListener("click", () => {
       console.log("START CLICKED (writing to Firebase)");
@@ -322,23 +295,14 @@ window.addEventListener("load", () => {
     });
   }
 
-  // Optional: simple keyboard reset for local testing (R key)
   window.addEventListener("keydown", (e) => {
     if (e.key.toLowerCase() === "r") {
       writeResetToFirebase().catch((err) => console.log("Reset failed:", err));
     }
   });
 
-  // Rebuild markers on resize
   window.addEventListener("resize", () => {
     buildMileMarkers();
     if (!running) render(START_PROGRESS);
   });
 });
-
-
-
-
-
-
-
