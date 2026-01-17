@@ -206,6 +206,7 @@ function tick() {
 function attachFirebaseListener() {
   onValue(stateRef, (snapshot) => {
     const s = snapshot.val();
+    console.log("FIREBASE STATE:", s);
     if (!s) return;
 
     // Plan updates
@@ -300,3 +301,4 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
