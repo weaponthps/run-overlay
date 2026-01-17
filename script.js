@@ -3,13 +3,20 @@
 // Start button controls animation
 // ===============================
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+let lastRunId = null;
+
 console.log("SCRIPT LOADED", new Date().toISOString());
 window.onerror = (msg, src, line, col) =>
   console.log("ERROR:", msg, "line:", line, "col:", col);
 
 // ====== CONFIG (EDIT THESE) ======
-const TOTAL_MILES = 4;            // 1..10
-const GOAL_TIME_MINUTES = 0.2;    // for testing (0.2 = 12 sec). Set to 40 for real run.
+let totalMiles = 4;
+let goalTimeMinutes = 40;
+let goalTimeSeconds = goalTimeMinutes * 60;
+
 const START_PROGRESS = 0.0;       // 0 = start
 const BACK_FOOT_OFFSET_PX = 22;   // green ends behind runner
 // ===============================
@@ -153,3 +160,4 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
