@@ -91,7 +91,7 @@ function buildMileMarkers() {
   mileMarkersEl.style.width = `${trackRect.width}px`;
 
   let markerCount;
-  
+
   if (totalMiles < 1) {
     markerCount = Math.round(totalMiles * 10); // 0.1 mile markers
   } else if (totalMiles <= 10) {
@@ -100,25 +100,40 @@ function buildMileMarkers() {
     markerCount = Math.floor(totalMiles / 5); // every 5 miles
   }
 
-for (let i = 1; i <= markerCount; i++) {
-  let label;
-  let ratio;
+  for (let i = 1; i <= markerCount; i++) {
+    let label;
+    let ratio;
 
-  if (totalMiles < 1) {
-    label = (i / 10).toFixed(1);
-    ratio = (i / 10) / totalMiles;
-  } else if (totalMiles <= 10) {
-    label = i;
-    ratio = i / totalMiles;
-  } else {
-    label = i * 5;
-    ratio = (i * 5) / totalMiles;
+    if (totalMiles < 1) {
+      label = (i / 10).toFixed(1);
+      ratio = (i / 10) / totalMiles;
+    } else if (totalMiles <= 10) {
+      label = i;
+      ratio = i / totalMiles;
+    } else {
+      label = i * 5;
+      ratio = (i * 5) / totalMiles;
+    }
+
+    // Guard against floating point overflow
+    ratio = Math.min(1, Math.max(0, ratio));
+
+    const xPx = ratio * trackRect.width;
+
+    const marker = document.createElement("div");
+    marker.className = "mile-marker";
+    marker.dataset.mile = String(label);
+    marker.style.left = `${xPx}px`;
+
+    marker.innerHTML = `
+      <div class="tick"></div>
+      <div class="label">${label}</div>
+    `;
+
+    mileMarkersEl.appendChild(marker);
   }
-
-  const xPx = ratio * trackRect.width;
-
-  // build marker using `label`
 }
+
 
 }
 
@@ -320,6 +335,7 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
 
 
 
