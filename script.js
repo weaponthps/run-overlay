@@ -208,31 +208,49 @@ function tick() {
 // ----- Firebase listener -----
 function attachFirebaseListener() {
   onValue(
-  stateRef,
-  (snapshot) => {
-    const s = snapshot.val();
-    console.log("FIREBASE STATE:", s);
-    if (!s) return;
-    // Plan updates
-    const newMiles = Number(s.planMiles ?? totalMiles);
-    const newMinutes = Number(s.planMinutes ?? goalTimeMinutes);
+    stateRef,
+    (snapshot) => {
+      const s = snapshot.val();
+      console.log("FIREBASE STATE:", s);
+      if (!s) return;
 
-    const planChanged = newMiles !== totalMiles || newMinutes !== goalTimeMinutes;
-    if (planChanged) {
-      totalMiles = Math.max(1, newMiles);
-      goalTimeMinutes = Math.max(1, newMinutes);
-      goalTimeSeconds = goalTimeMinutes * 60;
+      const newMiles = Number(s.planMiles ?? totalMiles);
+      const newMinutes = Number(s.planMinutes ?? goalTimeMinutes);
 
-      updatePlanUI();
-      buildMileMarkers();
+      const planChanged = newMiles !== totalMiles || newMinutes !== goalTimeMinutes;
+      if (planChanged) {
+        totalMiles = Math.max(1, newMiles);
+        goalTimeMinutes = Math.max(1, newMinutes);
+        goalTimeSeconds = goalTimeMinutes * 60;
 
-      if (!running) render(START_PROGRESS);
+        updatePlanUI();
+        buildMileMarkers();
+
+        if (!running) render(START_PROGRESS);
+      }
+
+      const status = String(s.status ?? "ready");
+      const runId = Number(s.runId ?? 0);
+      const startMs = Number(s.startTimeEpochMs ?? 0);
+
+      if (status === "ready") {
+        resetOverlayVisuals();
+        lastRunId = runId;
+        return;
+      }
+
+      if (status === "running") {
+        if (runId !== lastRunId || !running) {
+          lastRunId = runId;
+          if (startMs > 0) startRunLocallyFrom(startMs);
+        }
+      }
+    },
+    (error) => {
+      console.log("FIREBASE onValue ERROR:", error);
     }
-  },
-  (error) => {
-    console.log("FIREBASE onValue ERROR:", error);
-  }
-);
+  );
+}
 
     // State transitions
     const status = String(s.status ?? "ready");
@@ -311,6 +329,7 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
 
 
 
