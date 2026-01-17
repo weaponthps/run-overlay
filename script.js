@@ -21,13 +21,110 @@ const START_PROGRESS = 0.0;       // 0 = start
 const BACK_FOOT_OFFSET_PX = 22;   // green ends behind runner
 // ===============================
 
-const GOAL_TIME_SECONDS = GOAL_TIME_MINUTES * 60;
+const goalTimeSeconds = GOAL_TIME_MINUTES * 60;
 
 const runner = document.getElementById("runner");
 const trackProgress = document.getElementById("trackProgress");
 const completeBadge = document.getElementById("completeBadge");
 const startBtn = document.getElementById("startBtn");
 const mileMarkersEl = document.getElementById("mileMarkers");
+
+// ----- Firebase init -----
+const firebaseConfig = {
+  // paste from Firebase console
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const stateRef = ref(db, "runOverlay/state");
+
+// ----- Overlay state -----
+let totalMiles = 4;
+let goalTimeMinutes = 40;
+let goalTimeSeconds = goalTimeMinutes * 60;
+
+let running = false;
+let startTime = null;     // epoch ms (from Firebase when running)
+let lastRunId = null;
+
+// Update the static labels (distance/time)
+function updatePlanUI() {
+  document.getElementById("totalDistance").textContent = `${totalMiles.toFixed(1)} mi`;
+
+  // show minutes as MM:SS style if you want; for now simple:
+  document.getElementById("goalTime").textContent = `${goalTimeMinutes}:00`;
+}
+
+// Reset visuals to “ready”
+function resetOverlayVisuals() {
+  running = false;
+  startTime = null;
+
+  completeBadge.style.display = "none";
+  trackProgress.style.width = "0px";
+  render(0);
+
+  startBtn.style.display = "block";
+  startBtn.textContent = "Start";
+}
+
+// Start visuals based on Firebase start time
+function startRunFromFirebase(startTimeEpochMs) {
+  completeBadge.style.display = "none";
+  trackProgress.style.width = "0px";
+
+  buildMileMarkers();
+
+  startTime = startTimeEpochMs;
+  running = true;
+
+  startBtn.style.display = "none";
+
+  render(0);
+  requestAnimationFrame(tick);
+}
+
+// Real-time listener
+onValue(stateRef, (snapshot) => {
+  const s = snapshot.val();
+  if (!s) return;
+
+  // 1) Apply plan updates
+  const newMiles = Number(s.planMiles ?? totalMiles);
+  const newMinutes = Number(s.planMinutes ?? goalTimeMinutes);
+
+  const planChanged = (newMiles !== totalMiles) || (newMinutes !== goalTimeMinutes);
+  if (planChanged) {
+    totalMiles = newMiles;
+    goalTimeMinutes = newMinutes;
+    goalTimeSeconds = goalTimeMinutes * 60;
+
+    updatePlanUI();
+    buildMileMarkers();
+
+    // If not running, keep runner at start
+    if (!running) render(0);
+  }
+
+  // 2) Handle start/reset
+  const status = String(s.status ?? "ready");
+  const runId = Number(s.runId ?? 0);
+  const startMs = Number(s.startTimeEpochMs ?? 0);
+
+  if (status === "ready") {
+    resetOverlayVisuals();
+    lastRunId = runId;
+    return;
+  }
+
+  if (status === "running") {
+    // Only start if this is a new run
+    if (runId !== lastRunId) {
+      lastRunId = runId;
+      startRunFromFirebase(startMs);
+    }
+  }
+});
 
 const trackEl = document.querySelector(".track");
 const trackAreaEl = document.querySelector(".track-area");
@@ -47,8 +144,8 @@ function buildMileMarkers() {
   mileMarkersEl.style.left = `${trackLeftPx}px`;
   mileMarkersEl.style.width = `${trackRect.width}px`;
 
-  for (let mile = 1; mile <= TOTAL_MILES; mile++) {
-    const ratio = mile / TOTAL_MILES;
+  for (let mile = 1; mile <= totalMiles; mile++) {
+    const ratio = mile / totalMiles;
     const xPx = ratio * trackRect.width;
 
     const marker = document.createElement("div");
@@ -69,7 +166,7 @@ function updateMileMarkerStates(progress) {
   const markers = document.querySelectorAll(".mile-marker");
   markers.forEach((marker) => {
     const mile = Number(marker.dataset.mile);
-    const mileProgress = mile / TOTAL_MILES;
+    const mileProgress = mile / totalMiles;
 
     if (progress >= mileProgress) marker.classList.add("completed");
     else marker.classList.remove("completed");
@@ -105,7 +202,8 @@ function tick() {
   if (!running) return;
 
   const elapsedSeconds = (Date.now() - startTime) / 1000;
-  const progress = START_PROGRESS + elapsedSeconds / GOAL_TIME_SECONDS;
+  const progress = elapsedSeconds / goalTimeSeconds;
+
 
   if (progress >= 1) {
     console.log("COMPLETE");
@@ -160,4 +258,5 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
 
