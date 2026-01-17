@@ -29,10 +29,14 @@ const statusBox = document.getElementById("statusBox");
 let lastRunId = 0;
 
 function readInputs() {
-  const planMiles = Math.max(1, Math.min(10, Number(milesInput.value)));
+  const rawMiles = Number(milesInput.value);
+  const planMiles = Math.min(26, Math.max(0.1, rawMiles));
+
   const planMinutes = Math.max(1, Number(minutesInput.value));
+
   return { planMiles, planMinutes };
 }
+
 
 async function applyPlan() {
   const now = Date.now();
