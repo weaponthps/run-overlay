@@ -252,27 +252,6 @@ function attachFirebaseListener() {
   );
 }
 
-    // State transitions
-    const status = String(s.status ?? "ready");
-    const runId = Number(s.runId ?? 0);
-    const startMs = Number(s.startTimeEpochMs ?? 0);
-
-    if (status === "ready") {
-      resetOverlayVisuals();
-      lastRunId = runId;
-      return;
-    }
-
-    if (status === "running") {
-      // Only start if this is a new run, OR we aren't already running
-      if (runId !== lastRunId || !running) {
-        lastRunId = runId;
-        if (startMs > 0) startRunLocallyFrom(startMs);
-      }
-    }
-  });
-}
-
 // ----- Local Start button writes to Firebase -----
 async function writeStartToFirebase() {
   const now = Date.now();
@@ -329,6 +308,7 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
 
 
 
