@@ -278,6 +278,7 @@ window.addEventListener("load", () => {
   render(START_PROGRESS);
 
   // Listen to Firebase
+  console.log("ATTACHING FIREBASE LISTENER NOW");
   attachFirebaseListener();
 
   // Local button behavior (writes to Firebase so overlay + TikTok stay consistent)
@@ -301,4 +302,5 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
 
