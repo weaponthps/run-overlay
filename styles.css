@@ -1,28 +1,222 @@
 :root {
-  --border: #D6D9D3;
-  --text: #1E1E1E;
-  --muted: #6B6F6;
+  --bg1: #0b1030;
+  --bg2: #07091a;
+
+  --cyan: rgba(120, 210, 255, 0.9);
+  --cyanSoft: rgba(120, 210, 255, 0.35);
+
+  --green: #18ff88;
+  --greenSoft: rgba(24, 255, 136, 0.35);
+
+  --text: #ffffff;
+  --muted: rgba(200, 220, 255, 0.85);
 }
+
+* { box-sizing: border-box; }
 
 html, body {
   width: 100%;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* <- kills scrollbars */
+  overflow: hidden; /* no scrollbars */
 }
 
+body {
+  background: transparent;
+  font-family: "Rowdies", Arial, sans-serif;
+  color: var(--text);
+}
+
+/* =========================
+   CARD / BACKGROUND THEME
+========================= */
+.card {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+
+  padding: 22px;
+  border-radius: 28px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(66, 99, 255, 0.35), transparent 60%),
+    radial-gradient(900px 600px at 80% 30%, rgba(255, 80, 220, 0.25), transparent 55%),
+    radial-gradient(1000px 700px at 50% 100%, rgba(0, 255, 200, 0.12), transparent 55%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+
+  box-shadow:
+    0 0 0 3px rgba(120, 200, 255, 0.25),
+    0 0 26px rgba(90, 180, 255, 0.45),
+    0 0 80px rgba(190, 90, 255, 0.18);
+}
+
+/* subtle twinkle overlay */
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.25;
+  background:
+    radial-gradient(2px 2px at 10% 20%, #fff, transparent 55%),
+    radial-gradient(1px 1px at 30% 70%, #fff, transparent 55%),
+    radial-gradient(1px 1px at 60% 30%, #fff, transparent 55%),
+    radial-gradient(2px 2px at 80% 60%, #fff, transparent 55%),
+    radial-gradient(1px 1px at 90% 15%, #fff, transparent 55%);
+  filter: blur(0.2px);
+}
+
+/* =========================
+   TIMER PILL
+========================= */
+.timer-pill {
+  margin: 6px auto 10px auto;
+  width: min(560px, 86vw);
+  padding: 14px 20px;
+  border-radius: 999px;
+  text-align: center;
+
+  background: rgba(10, 18, 55, 0.65);
+  border: 3px solid rgba(120, 210, 255, 0.75);
+
+  box-shadow:
+    0 0 0 3px rgba(120, 210, 255, 0.15),
+    0 0 18px rgba(120, 210, 255, 0.45),
+    inset 0 0 20px rgba(50, 160, 255, 0.25);
+
+  backdrop-filter: blur(6px);
+}
+
+#timer {
+  font-size: 72px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #fff;
+
+  text-shadow:
+    0 0 10px rgba(120, 210, 255, 0.45),
+    0 0 30px rgba(120, 210, 255, 0.18);
+}
+
+/* =========================
+   TRACK + RUNNER AREA
+========================= */
+.track-area {
+  position: relative;
+  height: 240px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.track {
+  position: absolute;
+  left: 18px;
+  right: 50px;
+  top: 120px;
+  height: 14px;
+
+  background: rgba(10, 18, 55, 0.6);
+  border-radius: 999px;
+  overflow: hidden;
+
+  border: 2px solid rgba(120, 210, 255, 0.35);
+  box-shadow:
+    0 0 14px rgba(120, 210, 255, 0.25),
+    inset 0 0 14px rgba(90, 180, 255, 0.18);
+}
+
+.track-progress {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+
+  background: linear-gradient(90deg, #19ff9a, #00d9ff);
+  box-shadow:
+    0 0 18px rgba(0, 255, 200, 0.45),
+    0 0 36px rgba(0, 190, 255, 0.22);
+}
+
+/* runner */
+.runner {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  font-size: 56px;
+
+  /* keep facing right (mirror) + centered on its x position */
+  transform: translateX(-50%) scaleX(-1);
+
+  filter: drop-shadow(0 0 8px rgba(120, 210, 255, 0.25));
+}
+
+/* =========================
+   MILE MARKERS
+========================= */
+.mile-markers {
+  position: absolute;
+  left: 0;
+  top: 120px; /* match .track top */
+  height: 70px;
+  pointer-events: none;
+}
+
+.mile-marker {
+  position: absolute;
+  top: -10px; /* tick slightly above the track */
+  width: 0;
+}
+
+.mile-marker .tick {
+  width: 5px;
+  height: 42px;
+  background: rgba(190, 220, 255, 0.75);
+  box-shadow: 0 0 10px rgba(120, 210, 255, 0.35);
+  border-radius: 3px;
+}
+
+.mile-marker .label {
+  margin-top: 6px;
+  transform: translateX(-50%) translateX(-4px);
+
+  font-size: 26px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  color: #ffffff;
+  -webkit-text-stroke: 2px rgba(0,0,0,0.8);
+  text-shadow: 0 0 10px rgba(120, 210, 255, 0.25);
+
+  transition: color 0.25s ease, text-shadow 0.25s ease, -webkit-text-stroke-color 0.25s ease;
+}
+
+.mile-marker.completed .label {
+  color: var(--green);
+  -webkit-text-stroke: 2px rgba(0,0,0,0.75);
+  text-shadow: 0 0 14px rgba(24, 255, 136, 0.35);
+}
+
+/* =========================
+   COMPLETE BADGE
+========================= */
 .complete-badge {
   position: absolute;
   right: 18px;
   top: 18px;
   padding: 10px 14px;
   border-radius: 999px;
-  background: rgba(24, 196, 60, 0.15);
-  border: 2px solid #18c43c;
-  font-size: 20px;
+
+  background: rgba(24, 196, 60, 0.12);
+  border: 2px solid rgba(24, 255, 136, 0.75);
+
+  font-size: 18px;
   font-weight: 700;
-  display: none; /* hidden until complete */
+
+  display: none;
+
+  box-shadow:
+    0 0 14px rgba(24, 255, 136, 0.25),
+    inset 0 0 18px rgba(24, 255, 136, 0.12);
 }
 
 @keyframes popIn {
@@ -30,157 +224,101 @@ html, body {
   100% { transform: scale(1); opacity: 1; }
 }
 
-.runner {
-  position: absolute;
-  top: 98px;
-  left: 0;
-  font-size: 56px;
-  transform: translateX(-50%) scaleX(-1); /* center + face right */
-}
-
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  background: transparent; /* important later for overlay */
-  font-family: Arial, Helvetica, sans-serif;
-  color: var(--text);
-}
-
-.card {
-  width: 100vw;
-  height: 100vh;
-  background: #F7F8F6;
-  border: 2px solid var(--border);
-  padding: 18px 18px 10px 18px;
-}
-
-
-.track-area {
-  position: relative;
-  height: 260px;
-  overflow: hidden;
-}
-
-.track {
-  position: absolute;
-  left: 18px;
-  right: 50px;   /* <- increase this until runner fits */
-  top: 150px;
-  height: 14px;
-  background: #000;
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.track-progress {
-  height: 100%;
-  width: 0%;              /* starts empty */
-  background: #18c43c;    /* green fill */
-  border-radius: 999px;
-}
-
-
-.runner {
-  position: absolute;
-  top: 98px;
-  left: 0;
-  font-size: 56px;
-}
-
+/* =========================
+   STATS PANEL
+========================= */
 .stats {
+  margin-top: 10px;
+  padding: 16px 22px;
+  border-radius: 22px;
+
+  background: rgba(10, 18, 55, 0.35);
+  border: 2px solid rgba(120, 210, 255, 0.18);
+  backdrop-filter: blur(6px);
+
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  padding: 12px 24px 0 24px;
+  gap: 18px;
+}
+
+.col {
+  display: grid;
+  align-content: start;
+  gap: 8px;
 }
 
 .label {
-  font-size: 18px;
+  font-size: 16px;
   color: var(--muted);
-  margin-top: 10px;
+  opacity: 0.92;
 }
 
 .value {
-  font-size: 40px;
-  line-height: 1.05;
-}
-
-.mile-markers {
-  position: absolute;
-  left: 0;
-  top: 150px;           /* match .track top */
-  height: 60px;         /* room for labels */
-  pointer-events: none; /* so it won’t interfere with clicks */
-}
-
-.mile-marker {
-  position: absolute;
-  top: -10px;           /* puts tick slightly above track */
-  width: 0;
-}
-
-.mile-marker .tick {
-  width: 4px;
-  height: 38px;
-  background: #111;
-  opacity: 0.85;
-  border-radius: 2px;  /* softer ends */
-}
-
-.mile-marker .label {
-  margin-top: 6px;
-  transform: translateX(-50%) translateX(-4px);
-  font-size: 26px;
+  font-size: 54px;
   font-weight: 700;
-  white-space: nowrap;
+  line-height: 1.0;
+  color: #fff;
 
-  color: #ffffff; /* white text */
-
-  /* Black outline / stroke */
-  -webkit-text-stroke: 2px #000000;
-  paint-order: stroke fill;
-
-  transition: color 0.25s ease, -webkit-text-stroke-color 0.25s ease;
+  text-shadow: 0 0 10px rgba(120, 210, 255, 0.22);
 }
 
-.mile-marker.completed .label {
-  text-shadow: 0 0 6px rgba(24, 196, 60, 0.6);
-  color: #18c43c; /* green */
-  -webkit-text-stroke: 2px #0f6e2a; /* darker green outline */
+.value.small {
+  font-size: 40px;
 }
 
+.metric {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 18px;
+
+  background: rgba(10, 18, 55, 0.22);
+  border: 1px solid rgba(120, 210, 255, 0.12);
+}
+
+.icon {
+  font-size: 52px;
+  text-align: center;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,0.12));
+}
+
+.metric-text .value {
+  font-size: 54px;
+}
+
+/* =========================
+   START BUTTON
+========================= */
 .start-btn {
   position: absolute;
   right: 18px;
-  bottom: 14px;
+  bottom: 16px;
 
   padding: 10px 16px;
   border-radius: 999px;
-  border: 2px solid #111;
-  background: #fff;
-  color: #111;
+
+  border: 2px solid rgba(120, 210, 255, 0.6);
+  background: rgba(10, 18, 55, 0.55);
+  color: #fff;
 
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
 
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  box-shadow:
+    0 0 0 3px rgba(120, 210, 255, 0.10),
+    0 0 18px rgba(120, 210, 255, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+.start-btn:hover {
+  box-shadow:
+    0 0 0 3px rgba(120, 210, 255, 0.12),
+    0 0 26px rgba(120, 210, 255, 0.35);
 }
 
 .start-btn:active {
   transform: translateY(1px);
 }
-
-
-
-
-
-
-
-
-
-
-
-
