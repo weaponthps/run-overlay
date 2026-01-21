@@ -4,19 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Run Overlay</title>
+
+  <!-- Rowdies font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="card">
+    <!-- subtle sparkles layer (pure CSS) -->
+    <div class="sparkles" aria-hidden="true"></div>
+
+    <!-- TIMER PILL (visual only for now; we’ll wire it up in JS later) -->
+    <div class="timer-pill">
+      <span id="timer">00:00:00</span>
+    </div>
+
     <div class="track-area">
-      <!-- Placeholder “track” line (we’ll replace with your real path/SVG next) -->
       <div class="track">
         <div id="trackProgress" class="track-progress"></div>
       </div>
 
       <div id="mileMarkers" class="mile-markers"></div>
 
-      <!-- Runner icon (placeholder) -->
+      <!-- Runner icon -->
       <div id="runner" class="runner" title="You">🏃</div>
     </div>
 
@@ -26,18 +39,31 @@
     <div class="stats">
       <div class="col">
         <div class="label">Total Distance</div>
-        <div id="totalDistance" class="value">67.0 mi</div>
+        <div id="totalDistance" class="value">4.0 mi</div>
 
         <div class="label">Goal Time</div>
-        <div id="goalTime" class="value">67:00</div>
+        <div id="goalTime" class="value">40:00</div>
+
+        <div class="label">Pace</div>
+        <div id="pace" class="value small">-- min/mi</div>
       </div>
 
       <div class="col">
-        <div class="label">Calories</div>
-        <div id="calories" class="value">--</div>
+        <div class="metric">
+          <div class="icon">❤️</div>
+          <div class="metric-text">
+            <div class="label">Heart Rate</div>
+            <div id="hr" class="value">-- bpm</div>
+          </div>
+        </div>
 
-        <div class="label">Heart Rate</div>
-        <div id="hr" class="value">-- bpm</div>
+        <div class="metric">
+          <div class="icon">🔥</div>
+          <div class="metric-text">
+            <div class="label">Calories</div>
+            <div id="calories" class="value">-- cal</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -45,9 +71,3 @@
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
