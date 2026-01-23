@@ -401,9 +401,14 @@ body {
 
 /* HR: only show "bpm" (Pulsoid provides heart + number) */
 .metric.hr{
-  justify-content: flex-start;  /* aligns bpm next to Pulsoid */
-  gap: 120px;                    /* spacing between heart + bpm */
+  justify-content: flex-start;
+  gap: 50px;
 }
+
+.bpm-only{
+  margin-left: 66px;
+}
+
 
 
 .bpm-only{
@@ -414,6 +419,7 @@ body {
   opacity: 0.95;
   text-shadow: 0 2px 12px rgba(0,0,0,0.55);
 }
+
 
 
 
