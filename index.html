@@ -37,37 +37,30 @@
     <button id="startBtn" class="start-btn">Start</button>
 
     <div class="stats">
-      <div class="col">
-        <div class="label">Total Distance</div>
-        <div id="totalDistance" class="value">4.0 mi</div>
-
-        <div class="label">Goal Time</div>
-        <div id="goalTime" class="value">40:00</div>
-
-        <div class="label">Pace</div>
-        <div id="pace" class="value small">-- min/mi</div>
+      <!-- LEFT: plan stats (single line each) -->
+      <div class="plan">
+        <div class="plan-row"><span class="k">GOAL:</span> <span id="totalDistance" class="v">6.0 mi</span></div>
+        <div class="plan-row"><span class="k">TIME:</span> <span id="goalTime" class="v">60:00</span></div>
+        <div class="plan-row"><span class="k">PACE:</span> <span id="pace" class="v">10:00 min/mi</span></div>
       </div>
-
-      <div class="col">
-        <div class="metric">
-          <div class="icon">❤️</div>
-          <div class="metric-text">
-            <div class="label">Heart Rate</div>
-            <div id="hr" class="value">-- bpm</div>
-          </div>
+    
+      <!-- RIGHT: HR + Calories (labels removed) -->
+      <div class="metrics">
+        <!-- Pulsoid goes here (you will add their iframe/script) -->
+        <div class="metric hr">
+          <div class="bpm-only">bpm</div>
         </div>
-
-        <div class="metric">
-          <div class="icon">🔥</div>
-          <div class="metric-text">
-            <div class="label">Calories</div>
-            <div id="calories" class="value">-- cal</div>
-          </div>
+    
+        <div class="metric cal">
+          <div class="emoji">🔥</div>
+          <div id="calories" class="metric-value">-- cal</div>
         </div>
       </div>
     </div>
+
   </div>
 
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
