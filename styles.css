@@ -224,70 +224,6 @@ body {
 }
 
 /* =========================
-   STATS PANEL
-========================= */
-.stats {
-  margin-top: 10px;
-  padding: 16px 22px;
-  border-radius: 22px;
-
-  background: rgba(10, 18, 55, 0.35);
-  border: 2px solid rgba(120, 210, 255, 0.18);
-  backdrop-filter: blur(6px);
-
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-}
-
-.col {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-}
-
-.label {
-  font-size: 16px;
-  color: var(--muted);
-  opacity: 0.92;
-}
-
-.value {
-  font-size: 54px;
-  font-weight: 700;
-  line-height: 1.0;
-  color: #fff;
-
-  text-shadow: 0 0 10px rgba(120, 210, 255, 0.22);
-}
-
-.value.small {
-  font-size: 40px;
-}
-
-.metric {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 18px;
-
-  background: rgba(10, 18, 55, 0.22);
-  border: 1px solid rgba(120, 210, 255, 0.12);
-}
-
-.icon {
-  font-size: 52px;
-  text-align: center;
-  filter: drop-shadow(0 0 10px rgba(255,255,255,0.12));
-}
-
-.metric-text .value {
-  font-size: 54px;
-}
-
-/* =========================
    START BUTTON
 ========================= */
 .start-btn {
@@ -324,7 +260,7 @@ body {
 
 /* ==============================
    Bottom stats (bigger + cleaner)
-   ============================== */
+============================== */
 
 .stats{
   display: grid;
@@ -332,6 +268,13 @@ body {
   gap: 28px;
   padding: 18px 22px 0 22px;
   align-items: stretch;
+
+  /* keep the panel look */
+  margin-top: 10px;
+  border-radius: 22px;
+  background: rgba(10, 18, 55, 0.35);
+  border: 2px solid rgba(120, 210, 255, 0.18);
+  backdrop-filter: blur(6px);
 }
 
 /* LEFT PANEL */
@@ -349,7 +292,6 @@ body {
   letter-spacing: 0.5px;
   text-transform: uppercase;
   color: #ffffff;
-  /* if you're using a dark card bg, this will pop */
   text-shadow: 0 2px 12px rgba(0,0,0,0.55);
 }
 
@@ -359,7 +301,7 @@ body {
 }
 
 .plan-row .v{
-  font-size: 78px;         /* value size: 6.0 mi / 60:00 / 10:00 min/mi */
+  font-size: 78px;         /* value size */
   opacity: 1;
 }
 
@@ -371,28 +313,34 @@ body {
   justify-content: center;
 }
 
-/* Each metric row */
+/* Each metric row (BPM + CAL) — BIGGER BOXES */
 .metric{
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 16px;
+  gap: 18px;
+
+  padding: 22px 26px;          /* bigger interior */
+  border-radius: 22px;         /* rounder */
+  min-height: 92px;            /* taller box */
+
   background: rgba(0,0,0,0.18);
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 10px 28px rgba(0,0,0,0.25) inset;
+  border: 2px solid rgba(255,255,255,0.16);  /* thicker outline */
+
+  box-shadow:
+    0 14px 34px rgba(0,0,0,0.25) inset,
+    0 0 0 1px rgba(0, 255, 180, 0.08);
 }
 
-/* Emoji big + clean */
+/* Fire emoji bigger */
 .metric .emoji{
-  font-size: 70px;
+  font-size: 88px;             /* bigger flame */
   line-height: 1;
-  filter: drop-shadow(0 2px 10px rgba(0,0,0,0.35));
+  filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40));
 }
 
-/* Metric value bigger */
+/* "cal" number bigger */
 .metric-value{
-  font-size: 70px;
+  font-size: 78px;             /* bigger cal text */
   font-weight: 900;
   letter-spacing: 0.5px;
   color: #ffffff;
@@ -402,28 +350,17 @@ body {
 /* HR: only show "bpm" (Pulsoid provides heart + number) */
 .metric.hr{
   justify-content: flex-start;
-  gap: 250px;
+  gap: 10px;                   /* normal spacing; don't use huge gap */
 }
 
+/* "bpm" bigger + slight left nudge */
 .bpm-only{
-  margin-left: 235px;
-}
-
-
-
-.bpm-only{
-  font-size: 70px;
+  font-size: 78px;             /* bigger bpm text */
   font-weight: 900;
   letter-spacing: 0.5px;
   color: #ffffff;
   opacity: 0.95;
   text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+
+  margin-left: 10px;           /* small nudge; adjust 0–20px as needed */
 }
-
-
-
-
-
-
-
-
