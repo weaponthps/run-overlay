@@ -348,10 +348,21 @@ body {
 
 /* Fire emoji bigger */
 .metric .emoji{
-  font-size: 88px;             /* bigger flame */
+  font-size: 88px;
   line-height: 1;
   filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40));
+  animation:
+    flamePulse 2.8s ease-in-out infinite,
+    flameFlicker 0.9s steps(2) infinite;
 }
+
+@keyframes flameFlicker {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+
 
 /* "cal" number bigger */
 .metric-value{
@@ -360,6 +371,12 @@ body {
   letter-spacing: 0.5px;
   color: #ffffff;
   text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+}
+
+@keyframes flamePulse {
+  0%   { transform: scale(1);     filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40)); }
+  50%  { transform: scale(1.12);  filter: drop-shadow(0 6px 24px rgba(255,120,0,0.55)); }
+  100% { transform: scale(1);     filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40)); }
 }
 
 /* HR: only show "bpm" (Pulsoid provides heart + number) */
@@ -379,5 +396,6 @@ body {
 
   margin-left: 230px;           /* small nudge; adjust 0–20px as needed */
 }
+
 
 
