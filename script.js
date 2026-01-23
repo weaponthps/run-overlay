@@ -174,7 +174,26 @@ function render(progress) {
   trackProgress.style.width = `${greenWidthPx}px`;
 
   updateMileMarkerStates(progress);
+
+  // ----------------------------
+  // Calories (estimated)
+  // Model: total calories ≈ weight_lb * miles * 0.63
+  // Example: 160 lb * 6 miles * 0.63 = 604.8 -> 605 cal
+  // ----------------------------
+  const BODY_WEIGHT_LB = 160;
+  const CAL_PER_LB_PER_MILE = 0.63;
+
+  const totalCalories = BODY_WEIGHT_LB * totalMiles * CAL_PER_LB_PER_MILE;
+  const currentCalories = Math.round(totalCalories * progress);
+
+  // Use the cached element if you have it; otherwise query safely
+  const el = (typeof caloriesEl !== "undefined" && caloriesEl)
+    ? caloriesEl
+    : document.getElementById("calories");
+
+  if (el) el.textContent = `${currentCalories} cal`;
 }
+
 
 function showComplete() {
   completeBadge.style.display = "block";
@@ -351,3 +370,4 @@ window.addEventListener("load", () => {
     if (!running) render(START_PROGRESS);
   });
 });
+
