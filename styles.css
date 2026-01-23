@@ -114,7 +114,8 @@ body {
   left: 18px;
   right: 50px;
   top: 120px;
-  height: 14px;
+
+  height: 26px;   /* 🔥 was 14px — makes the bar thicker */
 
   background: rgba(10, 18, 55, 0.6);
   border-radius: 999px;
@@ -133,9 +134,23 @@ body {
 
   background: linear-gradient(90deg, #19ff9a, #00d9ff);
   box-shadow:
-    0 0 18px rgba(0, 255, 200, 0.45),
-    0 0 36px rgba(0, 190, 255, 0.22);
+    0 0 22px rgba(0, 255, 200, 0.55),   /* stronger glow */
+    0 0 48px rgba(0, 190, 255, 0.35);
 }
+
+.track-progress::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.35),
+    rgba(255,255,255,0.05)
+  );
+  pointer-events: none;
+}
+
 
 /* runner */
 .runner {
@@ -364,4 +379,5 @@ body {
 
   margin-left: 230px;           /* small nudge; adjust 0–20px as needed */
 }
+
 
