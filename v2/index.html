@@ -2,76 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Run Overlay V2 — Control Panel</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Overlay V2</title>
+
+  <!-- Rowdies font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="wrap">
-    <h1>Run Overlay V2 — Control Panel</h1>
+  <div class="card">
+    <div class="sparkles"></div>
 
-    <div class="card">
-      <div class="row">
-        <div class="label">Status</div>
-        <div id="status" class="value pill">--</div>
+    <!-- TIMER -->
+    <div class="timer-pill">
+      <div id="timer">00:00:00</div>
+    </div>
+
+    <!-- TRACK AREA -->
+    <div class="track-area">
+      <div class="track">
+        <div id="trackProgress" class="track-progress"></div>
       </div>
 
-      <div class="grid">
-        <div class="panel">
-          <div class="panel-title">Speed (mph)</div>
-          <div class="big" id="speedVal">--</div>
-          <div class="buttons">
-            <button id="speedDown">- 0.1</button>
-            <button id="speedUp">+ 0.1</button>
-          </div>
-          <div class="hint">Tip: Use 0.1 mph steps for “likes = speed up”.</div>
-        </div>
+      <div id="mileMarkers" class="mile-markers"></div>
 
-        <div class="panel">
-          <div class="panel-title">Incline (%)</div>
-          <div class="big" id="inclineVal">--</div>
-          <div class="buttons">
-            <button id="inclineDown">- 0.5</button>
-            <button id="inclineUp">+ 0.5</button>
-          </div>
-          <div class="hint">Tip: Use 0.5% steps for “follows = incline up”.</div>
-        </div>
-      </div>
+      <div id="runner" class="runner" title="Runner">🏃</div>
+    </div>
 
-      <div class="grid">
-        <div class="panel">
-          <div class="panel-title">Checkpoint (from overlay)</div>
-          <div class="two">
-            <div>
-              <div class="small-label">Distance</div>
-              <div class="mid" id="cpDistance">--</div>
-            </div>
-            <div>
-              <div class="small-label">Calories</div>
-              <div class="mid" id="cpCalories">--</div>
-            </div>
-          </div>
-          <div class="hint">Overlay saves these automatically every ~10s while running.</div>
-        </div>
+    <!-- COMPLETE BADGE -->
+    <div id="completeBadge" class="complete-badge">✅ RUN COMPLETE!</div>
 
-        <div class="panel">
-          <div class="panel-title">Run Controls</div>
-          <div class="buttons">
-            <button id="startBtn" class="primary">Start</button>
-            <button id="stopBtn">Stop</button>
-            <button id="resetBtn" class="danger">Reset</button>
-          </div>
-          <div class="hint">
-            Start/Stop controls the overlay. Reset clears totals back to 0.
-          </div>
+    <!-- BOTTOM STATS -->
+    <div class="stats">
+      <!-- LEFT: plan -->
+      <div class="plan">
+        <div class="plan-row">
+          <span class="k">GOAL:</span>
+          <span class="v" id="goalMiles">--.- MI</span>
+        </div>
+        <div class="plan-row">
+          <span class="k">TIME:</span>
+          <span class="v" id="goalTime">--:--</span>
+        </div>
+        <div class="plan-row">
+          <span class="k">PACE:</span>
+          <span class="v" id="pace">--:-- MIN/MI</span>
         </div>
       </div>
 
-      <div class="footer">
-        <div class="mono">Firebase path: <span>runOverlayV2/state</span></div>
-        <div class="mono" id="msg"></div>
+      <!-- RIGHT: bpm + calories -->
+      <div class="metrics">
+        <div class="metric hr">
+          <div class="metric-value">
+            <span id="bpmSuffix" class="bpm-only">bpm</span>
+          </div>
+        </div>
+
+        <div class="metric cal">
+          <div class="emoji" id="fireEmoji">🔥</div>
+          <div class="metric-value"><span id="calories">0</span> cal</div>
+        </div>
       </div>
     </div>
+
+    <!-- Optional local test button (overlay doesn’t need it, but useful in browser) -->
+    <button id="localStartBtn" class="start-btn" title="Local test start (writes to Firebase)">Start</button>
   </div>
 
   <script type="module" src="script.js"></script>
