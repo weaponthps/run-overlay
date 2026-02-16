@@ -72,6 +72,8 @@
     <button id="localStartBtn" class="start-btn" title="Local test start (writes to Firebase)">Start</button>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <!-- IMPORTANT: load V2 script as a MODULE + cache-bust -->
+  <script type="module" src="./script.js?v=999"></script>
 </body>
 </html>
+
