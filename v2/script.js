@@ -3,6 +3,8 @@
 // Reads runOverlayV2/state from Firebase RTDB
 // ===============================
 
+console.log("✅ V2 OVERLAY script.js LOADED (top of file)", new Date().toISOString());
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
