@@ -49,6 +49,10 @@ const localStartBtn = document.getElementById("localStartBtn");
 const trackEl = document.querySelector(".track");
 const trackAreaEl = document.querySelector(".track-area");
 
+const speedEl = document.getElementById("speed");
+const inclineEl = document.getElementById("incline");
+const distanceEl = document.getElementById("distance");
+
 // State
 let status = "ready";           // ready | running | stopped
 let speedMph = 0;
