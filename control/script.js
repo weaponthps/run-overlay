@@ -1,17 +1,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
-// ✅ Paste your existing Firebase config here (same as V1 project is fine)
+// ====== FIREBASE CONFIG (PASTE YOURS HERE) ======
 const firebaseConfig = {
-  apiKey: "PASTE_YOURS",
-  authDomain: "PASTE_YOURS",
-  databaseURL: "PASTE_YOURS",
-  projectId: "PASTE_YOURS",
-  storageBucket: "PASTE_YOURS",
-  messagingSenderId: "PASTE_YOURS",
-  appId: "PASTE_YOURS",
-  measurementId: "PASTE_YOURS",
+  apiKey: "AIzaSyCl6se0G2WrDNkwh0sTEOW0uFBvx-V6cQo",
+  authDomain: "run-overlay.firebaseapp.com",
+  databaseURL: "https://run-overlay-default-rtdb.firebaseio.com",
+  projectId: "run-overlay",
+  storageBucket: "run-overlay.firebasestorage.app",
+  messagingSenderId: "511176060158",
+  appId: "1:511176060158:web:a1e016f482a027556449af",
+  measurementId: "G-CB6KRXGDLX"
 };
+// ===============================================
 
 const PATH = "runOverlayV2/state";
 
