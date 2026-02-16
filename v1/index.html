@@ -1,1 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Overlay</title>
+
+  <!-- Rowdies font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="card">
+    <!-- subtle sparkles layer (pure CSS) -->
+    <div class="sparkles" aria-hidden="true"></div>
+
+    <!-- TIMER PILL (visual only for now; we’ll wire it up in JS later) -->
+    <div class="timer-pill">
+      <span id="timer">00:00:00</span>
+    </div>
+
+    <div class="track-area">
+      <div class="track">
+        <div id="trackProgress" class="track-progress"></div>
+      </div>
+
+      <div id="mileMarkers" class="mile-markers"></div>
+
+      <!-- Runner icon -->
+      <div id="runner" class="runner" title="You">🏃</div>
+    </div>
+
+    <div id="completeBadge" class="complete-badge">✅ RUN COMPLETE!</div>
+    <button id="startBtn" class="start-btn">Start</button>
+
+    <div class="stats">
+      <!-- LEFT: plan stats (single line each) -->
+      <div class="plan">
+        <div class="plan-row"><span class="k">GOAL:</span> <span id="totalDistance" class="v">6.0 mi</span></div>
+        <div class="plan-row"><span class="k">TIME:</span> <span id="goalTime" class="v">60:00</span></div>
+        <div class="plan-row"><span class="k">PACE:</span> <span id="pace" class="v">10:00 min/mi</span></div>
+      </div>
+    
+      <!-- RIGHT: HR + Calories (labels removed) -->
+      <div class="metrics">
+        <!-- Pulsoid goes here (you will add their iframe/script) -->
+        <div class="metric hr">
+          <div class="bpm-only">bpm</div>
+        </div>
+    
+        <div class="metric cal">
+          <div class="emoji">🔥</div>
+          <div id="calories" class="metric-value">-- cal</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
 
