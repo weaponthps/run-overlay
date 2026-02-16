@@ -1,0 +1,403 @@
+:root {
+  --bg1: #0b1030;
+  --bg2: #07091a;
+
+  --cyan: rgba(120, 210, 255, 0.9);
+  --cyanSoft: rgba(120, 210, 255, 0.35);
+
+  --green: #18ff88;
+  --greenSoft: rgba(24, 255, 136, 0.35);
+
+  --text: #ffffff;
+  --muted: rgba(200, 220, 255, 0.85);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* no scrollbars */
+}
+
+body {
+  background: transparent;
+  font-family: "Rowdies", Arial, sans-serif;
+  color: var(--text);
+}
+
+/* =========================
+   CARD / BACKGROUND THEME
+========================= */
+.card {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+
+  padding: 22px;
+  border-radius: 28px;
+  overflow: hidden;
+
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(66, 99, 255, 0.35), transparent 60%),
+    radial-gradient(900px 600px at 80% 30%, rgba(255, 80, 220, 0.25), transparent 55%),
+    radial-gradient(1000px 700px at 50% 100%, rgba(0, 255, 200, 0.12), transparent 55%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+
+  box-shadow:
+    0 0 0 3px rgba(120, 200, 255, 0.25),
+    0 0 26px rgba(90, 180, 255, 0.45),
+    0 0 80px rgba(190, 90, 255, 0.18);
+}
+
+/* subtle twinkle overlay */
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.25;
+  background:
+    radial-gradient(2px 2px at 10% 20%, #fff, transparent 55%),
+    radial-gradient(1px 1px at 30% 70%, #fff, transparent 55%),
+    radial-gradient(1px 1px at 60% 30%, #fff, transparent 55%),
+    radial-gradient(2px 2px at 80% 60%, #fff, transparent 55%),
+    radial-gradient(1px 1px at 90% 15%, #fff, transparent 55%);
+  filter: blur(0.2px);
+}
+
+/* =========================
+   TIMER PILL
+========================= */
+.timer-pill {
+  margin: 6px auto 10px auto;
+  width: min(560px, 86vw);
+  padding: 14px 20px;
+  border-radius: 999px;
+  text-align: center;
+
+  background: rgba(10, 18, 55, 0.65);
+  border: 3px solid rgba(120, 210, 255, 0.75);
+
+  box-shadow:
+    0 0 0 3px rgba(120, 210, 255, 0.15),
+    0 0 18px rgba(120, 210, 255, 0.45),
+    inset 0 0 20px rgba(50, 160, 255, 0.25);
+
+  backdrop-filter: blur(6px);
+}
+
+#timer {
+  font-size: 72px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #fff;
+
+  text-shadow:
+    0 0 10px rgba(120, 210, 255, 0.45),
+    0 0 30px rgba(120, 210, 255, 0.18);
+}
+
+/* =========================
+   TRACK + RUNNER AREA
+========================= */
+.track-area {
+  position: relative;
+  height: 240px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.track {
+  position: absolute;
+  left: 18px;
+  right: 50px;
+  top: 120px;
+
+  height: 26px;   /* 🔥 was 14px — makes the bar thicker */
+
+  background: rgba(10, 18, 55, 0.6);
+  border-radius: 999px;
+  overflow: hidden;
+
+  border: 2px solid rgba(120, 210, 255, 0.35);
+  box-shadow:
+    0 0 14px rgba(120, 210, 255, 0.25),
+    inset 0 0 14px rgba(90, 180, 255, 0.18);
+}
+
+.track-progress {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+
+  background: linear-gradient(90deg, #19ff9a, #00d9ff);
+  box-shadow:
+    0 0 22px rgba(0, 255, 200, 0.55),   /* stronger glow */
+    0 0 48px rgba(0, 190, 255, 0.35);
+}
+
+.track-progress::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.35),
+    rgba(255,255,255,0.05)
+  );
+  pointer-events: none;
+}
+
+
+/* runner */
+.runner {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  font-size: 96px;
+
+  /* keep facing right (mirror) + centered on its x position */
+  transform: translateX(-50%) scaleX(-1);
+
+  filter: drop-shadow(0 0 8px rgba(120, 210, 255, 0.25));
+}
+
+/* =========================
+   MILE MARKERS
+========================= */
+.mile-markers {
+  position: absolute;
+  left: 0;
+  top: 120px; /* match .track top */
+  height: 70px;
+  pointer-events: none;
+}
+
+.mile-marker {
+  position: absolute;
+  top: -10px; /* tick slightly above the track */
+  width: 0;
+}
+
+.mile-marker .tick {
+  width: 6px;      /* was 4px */
+  height: 58px;   /* was 38px */
+  background: #111;
+  opacity: 0.9;
+  border-radius: 3px;
+}
+
+.mile-marker .label {
+  margin-top: 8px;                  /* a little more breathing room */
+  transform: translateX(-50%) translateX(-6px);
+  font-size: 58px;                  /* 🔥 bigger + readable on TikTok */
+  font-weight: 800;                 /* thicker text */
+  white-space: nowrap;
+
+  color: #ffffff;
+  -webkit-text-stroke: 2.5px #000;  /* slightly thicker outline */
+  paint-order: stroke fill;
+
+  transition: color 0.25s ease, -webkit-text-stroke-color 0.25s ease;
+}
+
+.mile-marker.completed .label {
+  color: var(--green);
+  -webkit-text-stroke: 2px rgba(0,0,0,0.75);
+  text-shadow: 0 0 14px rgba(24, 255, 136, 0.35);
+}
+
+/* =========================
+   COMPLETE BADGE
+========================= */
+.complete-badge {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  padding: 10px 14px;
+  border-radius: 999px;
+
+  background: rgba(24, 196, 60, 0.12);
+  border: 2px solid rgba(24, 255, 136, 0.75);
+
+  font-size: 48px;
+  font-weight: 700;
+
+  display: none;
+
+  box-shadow:
+    0 0 14px rgba(24, 255, 136, 0.25),
+    inset 0 0 18px rgba(24, 255, 136, 0.12);
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* =========================
+   START BUTTON
+========================= */
+.start-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+
+  padding: 10px 16px;
+  border-radius: 999px;
+
+  border: 2px solid rgba(120, 210, 255, 0.6);
+  background: rgba(10, 18, 55, 0.55);
+  color: #fff;
+
+  font-size: 38px;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow:
+    0 0 0 3px rgba(120, 210, 255, 0.10),
+    0 0 18px rgba(120, 210, 255, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+.start-btn:hover {
+  box-shadow:
+    0 0 0 3px rgba(120, 210, 255, 0.12),
+    0 0 26px rgba(120, 210, 255, 0.35);
+}
+
+.start-btn:active {
+  transform: translateY(1px);
+}
+
+/* ==============================
+   Bottom stats (bigger + cleaner)
+============================== */
+
+.stats{
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 28px;
+  padding: 18px 22px 0 22px;
+  align-items: stretch;
+
+  /* keep the panel look */
+  margin-top: 10px;
+  border-radius: 22px;
+  background: rgba(10, 18, 55, 0.35);
+  border: 2px solid rgba(120, 210, 255, 0.18);
+  backdrop-filter: blur(6px);
+}
+
+/* LEFT PANEL */
+.plan{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.plan-row{
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+}
+
+.plan-row .k{
+  font-size: 78px;         /* label size: GOAL/TIME/PACE */
+  opacity: 0.95;
+}
+
+.plan-row .v{
+  font-size: 78px;         /* value size */
+  opacity: 1;
+}
+
+/* RIGHT PANEL */
+.metrics{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+}
+
+/* Each metric row (BPM + CAL) — BIGGER BOXES */
+.metric{
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  padding: 22px 26px;          /* bigger interior */
+  border-radius: 22px;         /* rounder */
+  min-height: 92px;            /* taller box */
+
+  background: rgba(0,0,0,0.18);
+  border: 2px solid rgba(255,255,255,0.16);  /* thicker outline */
+
+  box-shadow:
+    0 14px 34px rgba(0,0,0,0.25) inset,
+    0 0 0 1px rgba(0, 255, 180, 0.08);
+}
+
+/* Fire emoji bigger */
+.metric .emoji{
+  font-size: 88px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40));
+  animation:
+    flamePulse 2.8s ease-in-out infinite,
+    flameFlicker 0.9s steps(2) infinite;
+}
+
+@keyframes flameFlicker {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+
+
+/* "cal" number bigger */
+.metric-value{
+  font-size: 78px;             /* bigger cal text */
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+}
+
+@keyframes flamePulse {
+  0%   { transform: scale(1);     filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40)); }
+  50%  { transform: scale(1.12);  filter: drop-shadow(0 6px 24px rgba(255,120,0,0.55)); }
+  100% { transform: scale(1);     filter: drop-shadow(0 3px 14px rgba(0,0,0,0.40)); }
+}
+
+/* HR: only show "bpm" (Pulsoid provides heart + number) */
+.metric.hr{
+  justify-content: flex-start;
+  gap: 10px;                   /* normal spacing; don't use huge gap */
+}
+
+/* "bpm" bigger + slight left nudge */
+.bpm-only{
+  font-size: 78px;             /* bigger bpm text */
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  opacity: 0.95;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.55);
+
+  margin-left: 268px;           /* small nudge; adjust 0–20px as needed */
+}
+
+
+
+
+
