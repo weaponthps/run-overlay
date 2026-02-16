@@ -213,6 +213,10 @@ function attach(){
     goalMiles = Number(s.goalMiles ?? 4);
     goalMinutes = Number(s.goalMinutes ?? 40);
 
+    if (speedEl && s.speedMph != null) speedEl.textContent = `${Number(s.speedMph).toFixed(1)} mph`;
+    if (inclineEl && s.inclinePct != null) inclineEl.textContent = `${Number(s.inclinePct).toFixed(1)} %`;
+    if (distanceEl && s.distanceMi != null) distanceEl.textContent = `${Number(s.distanceMi).toFixed(2)} mi`;
+
     startEpochMs = Number(s.startEpochMs ?? 0);
     lastTickEpochMs = Number(s.lastTickEpochMs ?? 0);
 
