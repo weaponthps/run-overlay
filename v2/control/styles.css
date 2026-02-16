@@ -1,0 +1,110 @@
+:root{
+  --bg1:#0b1030;
+  --bg2:#07091a;
+  --text:#fff;
+  --muted: rgba(200,220,255,.85);
+}
+
+*{ box-sizing:border-box; }
+html,body{ width:100%; height:100%; margin:0; overflow:hidden; }
+body{
+  background: transparent;
+  font-family: "Rowdies", system-ui, Arial, sans-serif;
+  color: var(--text);
+}
+
+.card{
+  width:100vw;
+  height:100vh;
+  padding: 18px;
+  border-radius: 24px;
+  overflow:hidden;
+  position: relative;
+
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(66, 99, 255, 0.35), transparent 60%),
+    radial-gradient(900px 600px at 80% 30%, rgba(255, 80, 220, 0.25), transparent 55%),
+    radial-gradient(1000px 700px at 50% 100%, rgba(0, 255, 200, 0.12), transparent 55%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+
+  box-shadow:
+    0 0 0 3px rgba(120, 200, 255, 0.25),
+    0 0 26px rgba(90, 180, 255, 0.45),
+    0 0 80px rgba(190, 90, 255, 0.18);
+}
+
+.top{ display:flex; justify-content:space-between; align-items:end; gap:12px; }
+.title{ font-weight: 900; letter-spacing:.8px; font-size: 26px; }
+.sub{ color: var(--muted); font-size: 14px; }
+
+.hud{
+  margin-top: 12px;
+  display:flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pill{
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.18);
+  border: 2px solid rgba(255,255,255,.10);
+  display:flex;
+  gap: 10px;
+  align-items:baseline;
+}
+
+.pill .k{
+  font-size: 12px;
+  letter-spacing:.7px;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.pill .v{
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing:.3px;
+}
+
+.pill.status{
+  margin-left:auto;
+}
+
+.track-area{
+  position: relative;
+  height: 220px;
+  margin-top: 18px;
+  overflow:hidden;
+}
+
+.track{
+  position:absolute;
+  left: 14px;
+  right: 40px;
+  top: 120px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(10,18,55,.6);
+  border: 2px solid rgba(120,210,255,.35);
+  overflow:hidden;
+  box-shadow: 0 0 14px rgba(120,210,255,.25), inset 0 0 14px rgba(90,180,255,.18);
+}
+
+.track-progress{
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #19ff9a, #00d9ff);
+  box-shadow: 0 0 22px rgba(0, 255, 200, 0.55), 0 0 48px rgba(0, 190, 255, 0.35);
+}
+
+.runner{
+  position:absolute;
+  top: 70px;
+  left: 0;
+  font-size: 88px;
+  transform: translateX(-50%) scaleX(-1);
+  filter: drop-shadow(0 0 8px rgba(120, 210, 255, 0.25));
+}
