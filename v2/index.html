@@ -4,68 +4,64 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Run Overlay V2</title>
-
-  <!-- Rowdies font -->
+  <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="./styles.css?v=999" />
 </head>
 <body>
-  <div class="card">
-    <div class="sparkles"></div>
-
-    <!-- TIMER -->
-    <div class="timer-pill">
-      <div id="timer">00:00:00</div>
-    </div>
-
-    <!-- TRACK AREA -->
-    <div class="track-area">
-      <div class="track">
-        <div id="trackProgress" class="track-progress"></div>
+  <div class="dash">
+    <div class="panel top">
+      <div class="cell">
+        <div class="label">TIME ELAPSED</div>
+        <div id="timeElapsed" class="big">00:00</div>
       </div>
 
-      <div id="mileMarkers" class="mile-markers"></div>
+      <div class="divider"></div>
 
-      <div id="runner" class="runner" title="Runner">🏃</div>
-    </div>
-
-    <!-- COMPLETE BADGE -->
-    <div id="completeBadge" class="complete-badge">✅ RUN COMPLETE!</div>
-
-    <!-- BOTTOM STATS -->
-    <div class="stats">
-      <!-- LEFT: plan -->
-      <div class="plan">
-        <div class="plan-row"><span class="k">SPEED:</span>  <span id="speed" class="v">--.- mph</span></div>
-        <div class="plan-row"><span class="k">INCLINE:</span><span id="incline" class="v">--.- %</span></div>
-        <div class="plan-row"><span class="k">DIST:</span>   <span id="distance" class="v">--.-- mi</span></div>
-      </div>
-
-
-      <!-- RIGHT: bpm + calories -->
-      <div class="metrics">
-        <div class="metric hr">
-          <div class="metric-value">
-            <span id="bpmSuffix" class="bpm-only">bpm</span>
-          </div>
+      <div class="cell">
+        <div class="label">SPEED</div>
+        <div class="big">
+          <span id="speed" class="num">0.0</span><span class="unit">MPH</span>
         </div>
+      </div>
 
-        <div class="metric cal">
-          <div class="emoji" id="fireEmoji">🔥</div>
-          <div class="metric-value"><span id="calories">0</span> cal</div>
+      <div class="divider"></div>
+
+      <div class="cell">
+        <div class="label">INCLINE</div>
+        <div class="big">
+          <span id="incline" class="num">0.0</span><span class="unit">%</span>
         </div>
       </div>
     </div>
 
-    <!-- Optional local test button (overlay doesn’t need it, but useful in browser) -->
-    <button id="localStartBtn" class="start-btn" title="Local test start (writes to Firebase)">Start</button>
+    <div class="panel bottom">
+      <div class="cell">
+        <div class="label">CALORIES BURNT</div>
+        <div class="big">
+          <span id="calories" class="num">0</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="cell">
+        <div class="label">HEART RATE</div>
+        <div class="big hr">
+          <!-- Leave blank: you’ll overlay Pulsoid on top of/near this -->
+          <span id="hrSlot" class="num muted">--</span>
+          <span class="heart">❤</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tiny">
+      <span id="statusPill" class="pill">READY</span>
+      <span class="mono" id="debug"></span>
+    </div>
   </div>
 
-  <!-- IMPORTANT: load V2 script as a MODULE + cache-bust -->
-  <script type="module" src="./script.js?v=999"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
-
