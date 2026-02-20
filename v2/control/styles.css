@@ -3,7 +3,6 @@
   --card:#171717;
   --edge:rgba(255,255,255,0.10);
   --text:#f2f2f2;
-  --muted:rgba(255,255,255,0.75);
 }
 
 *{ box-sizing:border-box; }
@@ -12,20 +11,21 @@ html,body{
   height:100%;
   margin:0;
   font-family:"Rowdies", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: radial-gradient(1000px 700px at 20% 20%, rgba(255,255,255,0.08), transparent 55%),
-              linear-gradient(180deg, #0f0f0f, #070707);
+  background:
+    radial-gradient(1000px 700px at 20% 20%, rgba(255,255,255,0.08), transparent 55%),
+    linear-gradient(180deg, #0f0f0f, #070707);
   color:var(--text);
 }
 
 .wrap{
-  max-width: 980px;
+  max-width: 1100px;
   margin: 22px auto;
   padding: 18px;
 }
 
 h1{
   margin: 0 0 14px 0;
-  font-size: 34px;
+  font-size: 38px;
   letter-spacing: 1px;
 }
 
@@ -45,16 +45,17 @@ h1{
 }
 
 .label{
-  font-size:18px;
+  font-size:20px;
   opacity:0.9;
 }
 
 .pill{
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 999px;
   border:1px solid rgba(255,255,255,0.15);
   background: rgba(255,255,255,0.06);
   letter-spacing: 1px;
+  font-size: 18px;
 }
 
 .grid{
@@ -67,50 +68,66 @@ h1{
   border:1px solid rgba(255,255,255,0.10);
   background: rgba(0,0,0,0.25);
   border-radius: 14px;
-  padding: 14px;
+  padding: 16px;
 }
 
 .big{
-  font-size: 52px;
-  margin: 8px 0 10px 0;
+  font-size: 64px;
+  margin: 10px 0 14px 0;
 }
 
 .btnrow{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
+  gap:14px;
+  align-items:center;
 }
 
-button{
+/* BIG treadmill-friendly buttons */
+.bigbtn{
   font-family: inherit;
-  font-size: 16px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border:1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.07);
+  font-size: 30px;
+  padding: 22px 28px;
+  border-radius: 16px;
+  border:2px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.08);
   color: var(--text);
   cursor:pointer;
+  min-width: 170px;
+  min-height: 84px;
 }
 
-button:hover{
-  background: rgba(255,255,255,0.10);
+.bigbtn:hover{
+  background: rgba(255,255,255,0.12);
 }
 
-button:active{
-  transform: translateY(1px);
+.bigbtn:active{
+  transform: translateY(2px);
 }
 
-button.danger{
-  border-color: rgba(255,80,80,0.45);
+.bigbtn.danger{
+  border-color: rgba(255,80,80,0.55);
+  background: rgba(255,80,80,0.10);
+}
+
+/* Make the run controls row wrap nicely */
+.btnrow.controls .bigbtn{
+  min-width: 190px;
+}
+
+.hint{
+  margin-top: 10px;
+  opacity: 0.75;
+  font-size: 18px;
 }
 
 .mono{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 14px;
+  font-size: 15px;
   opacity: 0.85;
 }
 
 .tiny{
-  margin-top: 8px;
+  margin-top: 10px;
   opacity: 0.7;
 }
