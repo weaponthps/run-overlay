@@ -248,3 +248,81 @@ html, body{
 .emoji{
   font-size:120px;
 }
+
+/* ==========================================
+   V2 STREAM UPGRADES: autoscale, glow, zones
+   ========================================== */
+
+/* ---- Metric layout ---- */
+.metric-wrap{
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
+
+/* BIG number baseline (JS will auto-fit it) */
+.metric-value .num{
+  font-weight:900;
+  line-height:0.9;
+  letter-spacing:-2px;
+  font-size:160px; /* starting point; JS will adjust */
+  text-shadow: 0 8px 28px rgba(0,0,0,0.45);
+}
+
+.unit-below{
+  font-size:56px;
+  margin-top:10px;
+  opacity:0.9;
+}
+
+.emoji{
+  font-size:120px;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.45));
+}
+
+/* ---- Glow pop on change ---- */
+.metric.changed{
+  animation: glowPop 420ms ease-out;
+}
+@keyframes glowPop{
+  0%   { box-shadow: inset 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0); transform: scale(1); }
+  45%  { box-shadow: 0 0 26px rgba(120,210,255,0.38), 0 0 60px rgba(120,210,255,0.18); transform: scale(1.01); }
+  100% { box-shadow: inset 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0); transform: scale(1); }
+}
+
+/* ---- Speed zones: subtle accent ---- */
+#speedBox{
+  border: 2px solid rgba(255,255,255,0.10);
+}
+#speedBox.zone-walk { border-color: rgba(120,210,255,0.55); box-shadow: 0 0 20px rgba(120,210,255,0.20); }
+#speedBox.zone-jog  { border-color: rgba(24,255,136,0.55); box-shadow: 0 0 20px rgba(24,255,136,0.20); }
+#speedBox.zone-run  { border-color: rgba(255,210,90,0.60); box-shadow: 0 0 22px rgba(255,210,90,0.18); }
+#speedBox.zone-sprint{border-color: rgba(255,90,90,0.65);  box-shadow: 0 0 26px rgba(255,90,90,0.18); }
+
+/* ---- Meters ---- */
+.meter{
+  margin-top:16px;
+  height:14px;
+  border-radius:999px;
+  background: rgba(255,255,255,0.08);
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+.meter-fill{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background: linear-gradient(90deg, rgba(120,210,255,0.85), rgba(24,255,136,0.85));
+  box-shadow: 0 0 18px rgba(120,210,255,0.20);
+  transition: width 180ms linear;
+}
+
+/* ---- Fire pulse ---- */
+.fire{
+  animation: firePulse 1.8s ease-in-out infinite;
+  transform-origin: 50% 70%;
+}
+@keyframes firePulse{
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 10px 20px rgba(255,120,40,0.18)); }
+  50%      { transform: scale(1.06); filter: drop-shadow(0 16px 26px rgba(255,120,40,0.26)); }
+}
