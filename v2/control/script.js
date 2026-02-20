@@ -1,3 +1,4 @@
+// Run Overlay V2 — Control Panel
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
@@ -14,190 +15,133 @@ const firebaseConfig = {
 };
 // ===============================================
 
-const PATH = "runOverlayV2/state";
-
-// --- overlay tuning ---
-const BACK_FOOT_OFFSET_PX = 22;
-const TRACK_VISUAL_MAX_MILES = 1.0; // runner traverses full bar every 1 mile (loops visually)
-const CHECKPOINT_EVERY_MS = 10_000;
-
-// calories model (simple baseline; we can incorporate incline later)
-const BODY_WEIGHT_LB = 160;
-const CAL_PER_LB_PER_MILE = 0.63; // ~100.8 cal/mi at 160lb
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const stateRef = ref(db, PATH);
+const stateRef = ref(db, "runOverlayV2/state");
 
 // DOM
-const $ = (id) => document.getElementById(id);
-const statusEl = $("status");
-const speedEl = $("speed");
-const inclineEl = $("incline");
-const distanceEl = $("distance");
-const paceEl = $("pace");
-const caloriesEl = $("calories");
-const runnerEl = $("runner");
-const trackProgressEl = $("trackProgress");
+const statusEl = document.getElementById("status");
+const speedEl = document.getElementById("speed");
+const inclineEl = document.getElementById("incline");
 
-const trackEl = document.querySelector(".track");
-const trackAreaEl = document.querySelector(".track-area");
+const cpTime = document.getElementById("cpTime");
+const cpDist = document.getElementById("cpDist");
+const cpCal  = document.getElementById("cpCal");
 
-// Firebase-driven inputs + persisted checkpoint
-let status = "ready";
-let speedMph = 3.0;
-let inclinePct = 0.0;
+const startBtn = document.getElementById("startBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const resumeBtn = document.getElementById("resumeBtn");
+const resetBtn = document.getElementById("resetBtn");
+const msgEl = document.getElementById("msg");
 
-let distanceCheckpoint = 0;
-let caloriesCheckpoint = 0;
-let checkpointEpochMs = 0;
+let current = {
+  status: "ready",
+  speedMph: 0,
+  inclinePct: 0
+};
 
-// Local live accumulation
-let running = false;
-let distanceLive = 0;
-let caloriesLive = 0;
-
-let lastFrameMs = 0;
-let lastCheckpointWriteMs = 0;
-
-// Helpers
-function fmtMph(n){ return `${Number(n||0).toFixed(1)} mph`; }
-function fmtIncline(n){ return `${Number(n||0).toFixed(1)}%`; }
-function fmtMiles(n){ return `${Number(n||0).toFixed(2)} mi`; }
-
-function fmtPaceFromMph(mph){
-  mph = Number(mph || 0);
-  if (mph <= 0.05) return `--`;
-  const minutesPerMile = 60 / mph;
-  const m = Math.floor(minutesPerMile);
-  const s = Math.round((minutesPerMile - m) * 60);
-  const ss = String(s).padStart(2, "0");
-  return `${m}:${ss} min/mi`;
+function setMsg(t){
+  if (msgEl) msgEl.textContent = t || "";
 }
 
-function calcCaloriesFromMiles(miles){
-  const total = BODY_WEIGHT_LB * miles * CAL_PER_LB_PER_MILE;
-  return Math.round(total);
+function clamp(n, lo, hi){
+  return Math.max(lo, Math.min(hi, n));
 }
 
-function updateHud(){
-  if (statusEl) statusEl.textContent = status;
-  if (speedEl) speedEl.textContent = fmtMph(speedMph);
-  if (inclineEl) inclineEl.textContent = fmtIncline(inclinePct);
-  if (distanceEl) distanceEl.textContent = fmtMiles(distanceLive);
-  if (paceEl) paceEl.textContent = fmtPaceFromMph(speedMph);
-  if (caloriesEl) caloriesEl.textContent = `${caloriesLive} cal`;
+function fmtMMSS(ms){
+  const totalSec = Math.max(0, Math.floor(ms/1000));
+  const m = Math.floor(totalSec/60);
+  const s = totalSec%60;
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
-function renderTrack(){
-  // Visual loop: show progress across the bar every TRACK_VISUAL_MAX_MILES miles
-  const loopMiles = Math.max(0.1, TRACK_VISUAL_MAX_MILES);
-  const loopProgress = (distanceLive % loopMiles) / loopMiles; // 0..1
-
-  const trackRect = trackEl.getBoundingClientRect();
-  const areaRect = trackAreaEl.getBoundingClientRect();
-
-  const trackLeftPx = trackRect.left - areaRect.left;
-  const x = trackLeftPx + loopProgress * trackRect.width;
-  runnerEl.style.left = `${x}px`;
-
-  const greenWidthPx = Math.max(0, loopProgress * trackRect.width - BACK_FOOT_OFFSET_PX);
-  trackProgressEl.style.width = `${greenWidthPx}px`;
-}
-
-async function writeCheckpoint(){
+async function writePatch(patch){
   const now = Date.now();
-  await update(stateRef, {
-    distanceMilesCheckpoint: distanceLive,
-    caloriesCheckpoint: caloriesLive,
-    checkpointEpochMs: now,
-    updatedAtEpochMs: now
+  await update(stateRef, { ...patch, updatedAtEpochMs: now });
+}
+
+function wireButtons(){
+  document.querySelectorAll("button[data-speed]").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const delta = Number(btn.dataset.speed);
+      const next = clamp((current.speedMph ?? 0) + delta, 0, 15);
+      current.speedMph = next;
+      try {
+        await writePatch({ speedMph: next });
+        setMsg(`Speed -> ${next.toFixed(1)} mph`);
+      } catch(e){ setMsg(`Write failed: ${e}`); }
+    });
   });
-  lastCheckpointWriteMs = now;
+
+  document.querySelectorAll("button[data-inc]").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const delta = Number(btn.dataset.inc);
+      const next = clamp((current.inclinePct ?? 0) + delta, 0, 15);
+      current.inclinePct = next;
+      try {
+        await writePatch({ inclinePct: next });
+        setMsg(`Incline -> ${next.toFixed(1)}%`);
+      } catch(e){ setMsg(`Write failed: ${e}`); }
+    });
+  });
+
+  startBtn.addEventListener("click", async ()=>{
+    try{
+      await writePatch({ status: "running" });
+      setMsg("Started");
+    }catch(e){ setMsg(`Write failed: ${e}`); }
+  });
+
+  pauseBtn.addEventListener("click", async ()=>{
+    try{
+      await writePatch({ status: "paused" });
+      setMsg("Paused");
+    }catch(e){ setMsg(`Write failed: ${e}`); }
+  });
+
+  resumeBtn.addEventListener("click", async ()=>{
+    try{
+      await writePatch({ status: "running" });
+      setMsg("Resumed");
+    }catch(e){ setMsg(`Write failed: ${e}`); }
+  });
+
+  resetBtn.addEventListener("click", async ()=>{
+    try{
+      await writePatch({ command: "reset", status: "ready" });
+      setMsg("Reset requested");
+    }catch(e){ setMsg(`Write failed: ${e}`); }
+  });
 }
 
-function startLocalFromCheckpoint(){
-  // base the live values off the last persisted checkpoint
-  distanceLive = Number(distanceCheckpoint || 0);
-  caloriesLive = Number(caloriesCheckpoint || 0);
-
-  running = (status === "running");
-  lastFrameMs = performance.now();
-  updateHud();
-  renderTrack();
-}
-
-function tick(nowMs){
-  if (!running){
-    // still render (so speed changes show)
-    updateHud();
-    renderTrack();
-    requestAnimationFrame(tick);
-    return;
-  }
-
-  const dtSec = (nowMs - lastFrameMs) / 1000;
-  lastFrameMs = nowMs;
-
-  // integrate distance
-  const milesPerSec = (Number(speedMph || 0) / 3600);
-  distanceLive += milesPerSec * dtSec;
-
-  // calories derived from distance (baseline)
-  caloriesLive = calcCaloriesFromMiles(distanceLive);
-
-  updateHud();
-  renderTrack();
-
-  // periodic checkpoint write
-  const wallNow = Date.now();
-  if (wallNow - lastCheckpointWriteMs > CHECKPOINT_EVERY_MS) {
-    writeCheckpoint().catch(()=>{ /* ignore transient errors */ });
-  }
-
-  requestAnimationFrame(tick);
-}
-
-// Firebase listener
-onValue(stateRef, (snap) => {
+onValue(stateRef, (snap)=>{
   const s = snap.val();
   if (!s) return;
 
-  status = String(s.status ?? "ready");
-  speedMph = Number(s.speedMph ?? speedMph);
-  inclinePct = Number(s.inclinePct ?? inclinePct);
+  current.status = String(s.status ?? "ready");
+  current.speedMph = Number(s.speedMph ?? 0);
+  current.inclinePct = Number(s.inclinePct ?? 0);
 
-  distanceCheckpoint = Number(s.distanceMilesCheckpoint ?? distanceCheckpoint);
-  caloriesCheckpoint = Number(s.caloriesCheckpoint ?? caloriesCheckpoint);
-  checkpointEpochMs = Number(s.checkpointEpochMs ?? checkpointEpochMs);
+  if (statusEl) statusEl.textContent = current.status;
+  if (speedEl) speedEl.textContent = current.speedMph.toFixed(1);
+  if (inclineEl) inclineEl.textContent = current.inclinePct.toFixed(1);
 
-  const shouldRun = (status === "running");
-  const statusChanged = (shouldRun !== running);
+  const cp = s.checkpoint || {};
+  if (cpTime) cpTime.textContent = `Time: ${fmtMMSS(Number(cp.elapsedMs ?? 0))}`;
+  if (cpDist) cpDist.textContent = `Distance: ${Number(cp.distanceMi ?? 0).toFixed(2)} mi`;
+  if (cpCal)  cpCal.textContent  = `Calories: ${Math.round(Number(cp.calories ?? 0))}`;
 
-  // If we just transitioned into running, initialize local values from checkpoint.
-  // If we transitioned to ready, stop locally but keep live totals visible.
-  if (statusChanged) {
-    running = shouldRun;
-    if (running) {
-      startLocalFromCheckpoint();
-    } else {
-      // stop: keep current totals but stop integrating
-      updateHud();
-      renderTrack();
-    }
-  } else {
-    // same status; update HUD (speed/incline changes show immediately)
-    updateHud();
-  }
-}, (err) => {
-  console.log("Firebase listener error:", err?.message || err);
+}, (err)=>{
+  setMsg(`Listener error: ${err}`);
 });
 
-// Kick off initial render loop
-window.addEventListener("load", () => {
-  updateHud();
-  renderTrack();
-  requestAnimationFrame(tick);
+wireButtons();
 
-  window.addEventListener("resize", () => renderTrack());
-});
+// Initialize state if empty (safe)
+writePatch({
+  status: "ready",
+  speedMph: 0,
+  inclinePct: 0,
+  command: "",
+  checkpoint: { elapsedMs: 0, distanceMi: 0, calories: 0, atEpochMs: Date.now() }
+}).catch(()=>{});
