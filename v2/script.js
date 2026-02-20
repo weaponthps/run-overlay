@@ -223,6 +223,43 @@ onValue(stateRef, (snap) => {
     debugEl.textContent = `speed=${speedMph.toFixed(1)} incline=${inclinePct.toFixed(1)} dist=${distanceMi.toFixed(2)}mi`;
   }
 
+  // Example: called when new state arrives from Firebase
+function applyStateToUI(state) {
+  // Pull values (adjust names to your RTDB schema)
+  const mph = Number(state.speedMph ?? 0);
+  const incline = Number(state.inclinePct ?? 0);
+  const cal = Number(state.calories ?? 0);
+
+  // SPEED
+  if (speedNumEl) {
+    const next = mph.toFixed(1);
+    if (speedNumEl.textContent !== next) popChanged(speedBox);
+    speedNumEl.textContent = next;
+    fitNumberToBox(speedNumEl, speedBox);
+    setSpeedZone(speedBox, mph);
+    setMeter(speedMeterFill, Math.min(1, mph / 10)); // assumes 0–10mph typical
+  }
+
+  // INCLINE
+  if (inclineNumEl) {
+    const next = incline.toFixed(1);
+    if (inclineNumEl.textContent !== next) popChanged(inclineBox);
+    inclineNumEl.textContent = next;
+    fitNumberToBox(inclineNumEl, inclineBox);
+    setMeter(inclineMeterFill, Math.min(1, incline / 15)); // assumes 0–15%
+  }
+
+  // CALORIES
+  if (calNumEl) {
+    const next = String(Math.round(cal));
+    if (calNumEl.textContent !== next) popChanged(calBox);
+    calNumEl.textContent = next;
+    fitNumberToBox(calNumEl, calBox, { max: 190, min: 80 });
+  }
+}
+
+applyStateToUI(s);
+  
   render();
 }, (err) => console.log("onValue error:", err));
 
