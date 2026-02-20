@@ -38,6 +38,56 @@ const calEl = document.getElementById("calories");
 const statusPill = document.getElementById("statusPill");
 const debugEl = document.getElementById("debug");
 
+// ========= STREAM UX HELPERS =========
+
+// Auto-fit the number to its container width (no libraries)
+function fitNumberToBox(numEl, boxEl, { max = 180, min = 70 } = {}) {
+  if (!numEl || !boxEl) return;
+
+  // Temporarily set to max and shrink until it fits
+  let size = max;
+  numEl.style.fontSize = size + "px";
+
+  // Allow a bit of padding so it doesn't kiss the edges
+  const targetWidth = boxEl.clientWidth * 0.60; // 60% because emoji takes space
+  const maxIters = 40;
+
+  let i = 0;
+  while (i < maxIters && numEl.scrollWidth > targetWidth && size > min) {
+    size -= 3;
+    numEl.style.fontSize = size + "px";
+    i++;
+  }
+}
+
+// Flash glow on value change
+function popChanged(el) {
+  if (!el) return;
+  el.classList.remove("changed");
+  // force reflow so animation re-triggers
+  void el.offsetWidth;
+  el.classList.add("changed");
+}
+
+// Speed zone logic (mph)
+function setSpeedZone(speedBox, mph) {
+  if (!speedBox) return;
+
+  speedBox.classList.remove("zone-walk", "zone-jog", "zone-run", "zone-sprint");
+
+  if (mph < 3.0) speedBox.classList.add("zone-walk");
+  else if (mph < 5.0) speedBox.classList.add("zone-jog");
+  else if (mph < 7.5) speedBox.classList.add("zone-run");
+  else speedBox.classList.add("zone-sprint");
+}
+
+// Meter helper (0..1)
+function setMeter(fillEl, ratio01) {
+  if (!fillEl) return;
+  const r = Math.max(0, Math.min(1, ratio01));
+  fillEl.style.width = (r * 100).toFixed(1) + "%";
+}
+
 // --- Firebase init ---
 console.log("V2 OVERLAY script.js LOADED", new Date().toISOString());
 window.onerror = (msg, src, line, col) => console.log("ERROR:", msg, "line:", line, "col:", col);
