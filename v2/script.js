@@ -1,14 +1,8 @@
-// ===============================
-// RUN OVERLAY V2 — script.js
-// Reads runOverlayV2/state from Firebase RTDB
-// ===============================
-
-console.log("✅ V2 OVERLAY script.js LOADED (top of file)", new Date().toISOString());
+// Run Overlay V2 — Dashboard overlay
+// Firebase RTDB: runOverlayV2/state
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-
-console.log("OVERLAY V2 SCRIPT LOADED", new Date().toISOString());
 
 // ====== FIREBASE CONFIG (PASTE YOURS HERE) ======
 const firebaseConfig = {
@@ -23,240 +17,154 @@ const firebaseConfig = {
 };
 // ===============================================
 
-// Path for V2
+// --- Model assumptions (you can tweak later) ---
+const USER_WEIGHT_LB = 160; // you asked to assume this
+// Calories model: very simple and stable for streaming:
+// ~100 cal per mile at 160 lb, with incline multiplier.
+function caloriesPerMile(inclinePct){
+  // multiplier nudges calories up with incline.
+  // 0% => 1.00x, 5% => 1.25x, 10% => 1.50x
+  const m = 1 + (Math.max(0, inclinePct) * 0.05);
+  // base at 160lb
+  const base = 100;
+  return base * m * (USER_WEIGHT_LB / 160);
+}
+
+// --- DOM ---
+const timeEl = document.getElementById("timeElapsed");
+const speedEl = document.getElementById("speed");
+const inclineEl = document.getElementById("incline");
+const calEl = document.getElementById("calories");
+const statusPill = document.getElementById("statusPill");
+const debugEl = document.getElementById("debug");
+
+// --- Firebase init ---
+console.log("V2 OVERLAY script.js LOADED", new Date().toISOString());
+window.onerror = (msg, src, line, col) => console.log("ERROR:", msg, "line:", line, "col:", col);
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const stateRef = ref(db, "runOverlayV2/state");
 
-// Visual tuning
-const START_PROGRESS = 0.0;
-const BACK_FOOT_OFFSET_PX = 22;
-
-// DOM
-const timerEl = document.getElementById("timer");
-const runnerEl = document.getElementById("runner");
-const trackProgressEl = document.getElementById("trackProgress");
-const mileMarkersEl = document.getElementById("mileMarkers");
-const completeBadgeEl = document.getElementById("completeBadge");
-
-const goalMilesEl = document.getElementById("goalMiles");
-const goalTimeEl = document.getElementById("goalTime");
-const paceEl = document.getElementById("pace");
-const caloriesEl = document.getElementById("calories");
-
-const localStartBtn = document.getElementById("localStartBtn");
-
-const trackEl = document.querySelector(".track");
-const trackAreaEl = document.querySelector(".track-area");
-
-const speedEl = document.getElementById("speed");
-const inclineEl = document.getElementById("incline");
-const distanceEl = document.getElementById("distance");
-
-// State
-let status = "ready";           // ready | running | stopped
+// --- Local state (authoritative totals live here, persisted occasionally) ---
+let status = "ready";         // ready | running | paused
 let speedMph = 0;
 let inclinePct = 0;
 
-let totalMiles = 0;             // open-ended distance
-let totalCalories = 0;
+let elapsedMs = 0;            // total elapsed time while running
+let distanceMi = 0;           // accumulated
+let calories = 0;             // accumulated
 
-let goalMiles = 4;              // used only for UI display + marker spacing
-let goalMinutes = 40;
+let lastTickMs = 0;           // local ticking reference
+let lastPersistMs = 0;        // throttled writes back to Firebase
 
-let startEpochMs = 0;
-let lastTickEpochMs = 0;
-
-// Calories calibration:
-// You wanted 6 miles ≈ 605 cal => about 100.83 cal/mile.
-const CAL_PER_MILE = 605 / 6;
-
-// ---------- Helpers ----------
-function pad2(n){ return String(n).padStart(2,"0"); }
-
-function formatHMS(ms){
-  const s = Math.max(0, Math.floor(ms/1000));
-  const h = Math.floor(s/3600);
-  const m = Math.floor((s%3600)/60);
-  const sec = s%60;
-  return `${pad2(h)}:${pad2(m)}:${pad2(sec)}`;
+function fmtMMSS(ms){
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
 
-function formatGoalTime(min){
-  const m = Math.max(0, Math.floor(min));
-  return `${m} MIN`;
+function setStatusPill(s){
+  if (!statusPill) return;
+  statusPill.textContent = s.toUpperCase();
 }
 
-function paceFromTotals(){
-  if (totalMiles <= 0) return "--:-- MIN/MI";
-  const mins = (elapsedMs()/60000) / totalMiles; // minutes per mile
-  const mm = Math.floor(mins);
-  const ss = Math.floor((mins - mm)*60);
-  return `${pad2(mm)}:${pad2(ss)} MIN/MI`;
+function render(){
+  if (timeEl) timeEl.textContent = fmtMMSS(elapsedMs);
+  if (speedEl) speedEl.textContent = Number(speedMph).toFixed(1);
+  if (inclineEl) inclineEl.textContent = Number(inclinePct).toFixed(1);
+  if (calEl) calEl.textContent = String(Math.round(calories));
+  setStatusPill(status);
 }
 
-function elapsedMs(){
-  if (!startEpochMs) return 0;
-  return Date.now() - startEpochMs;
-}
-
-// Marker strategy:
-// We’ll draw markers up to goalMiles (1..26), and allow fractional goalMiles too.
-// If goalMiles < 1 => markers every 0.1
-// 1..10 => every 1
-// >10 => every 5
-function markerStep(miles){
-  if (miles < 1) return 0.1;
-  if (miles <= 10) return 1;
-  return 5;
-}
-
-function buildMileMarkers(){
-  if (!mileMarkersEl) return;
-  mileMarkersEl.innerHTML = "";
-
-  const trackRect = trackEl.getBoundingClientRect();
-  const areaRect = trackAreaEl.getBoundingClientRect();
-  const trackLeftPx = trackRect.left - areaRect.left;
-
-  mileMarkersEl.style.left = `${trackLeftPx}px`;
-  mileMarkersEl.style.width = `${trackRect.width}px`;
-
-  const gm = Math.max(0.1, Number(goalMiles) || 4);
-  const step = markerStep(gm);
-
-  for (let v = step; v <= gm + 1e-9; v += step){
-    const ratio = v / gm;
-    const xPx = ratio * trackRect.width;
-
-    const marker = document.createElement("div");
-    marker.className = "mile-marker";
-    marker.dataset.value = String(v);
-    marker.style.left = `${xPx}px`;
-
-    const label = (step === 0.1) ? v.toFixed(1) : String(Math.round(v));
-    marker.innerHTML = `<div class="tick"></div><div class="label">${label}</div>`;
-    mileMarkersEl.appendChild(marker);
-  }
-}
-
-function updateMarkerStates(){
-  // “completed” relative to goalMiles scale (purely visual)
-  const gm = Math.max(0.1, Number(goalMiles) || 4);
-  const progress = Math.min(1, totalMiles / gm);
-
-  document.querySelectorAll(".mile-marker").forEach((m)=>{
-    const v = Number(m.dataset.value);
-    const mp = v / gm;
-    if (progress >= mp) m.classList.add("completed");
-    else m.classList.remove("completed");
-  });
-}
-
-function renderRunner(){
-  const gm = Math.max(0.1, Number(goalMiles) || 4);
-  const progress = Math.max(0, Math.min(1, totalMiles / gm));
-
-  const trackRect = trackEl.getBoundingClientRect();
-  const areaRect = trackAreaEl.getBoundingClientRect();
-
-  const trackLeftPx = trackRect.left - areaRect.left;
-  const x = trackLeftPx + progress * trackRect.width;
-  runnerEl.style.left = `${x}px`;
-
-  const greenWidthPx = Math.max(0, progress * trackRect.width - BACK_FOOT_OFFSET_PX);
-  trackProgressEl.style.width = `${greenWidthPx}px`;
-
-  updateMarkerStates();
-}
-
-function showComplete(){
-  completeBadgeEl.style.display = "block";
-  completeBadgeEl.style.animation = "popIn 250ms ease-out";
-}
-function hideComplete(){
-  completeBadgeEl.style.display = "none";
-}
-
-// ---------- Main loop ----------
-function tick(){
-  // Timer display
-  timerEl.textContent = formatHMS(elapsedMs());
-
-  // UI numbers
-  goalMilesEl.textContent = `${Number(goalMiles).toFixed(1)} MI`;
-  goalTimeEl.textContent = formatGoalTime(goalMinutes);
-  paceEl.textContent = paceFromTotals();
-
-  caloriesEl.textContent = String(Math.round(totalCalories));
-
-  // Runner
-  renderRunner();
-
+function tick(nowMs){
   requestAnimationFrame(tick);
-}
 
-// ---------- Firebase listener ----------
-function attach(){
-  onValue(stateRef, (snap)=>{
-    const s = snap.val();
-    console.log("OVERLAY V2 STATE:", s);
-    if (!s) return;
-
-    status = String(s.status ?? "ready");
-    speedMph = Number(s.speedMph ?? 0);
-    inclinePct = Number(s.inclinePct ?? 0);
-
-    totalMiles = Number(s.totalMiles ?? 0);
-    totalCalories = Number(s.totalCalories ?? 0);
-
-    goalMiles = Number(s.goalMiles ?? 4);
-    goalMinutes = Number(s.goalMinutes ?? 40);
-
-    if (speedEl && s.speedMph != null) speedEl.textContent = `${Number(s.speedMph).toFixed(1)} mph`;
-    if (inclineEl && s.inclinePct != null) inclineEl.textContent = `${Number(s.inclinePct).toFixed(1)} %`;
-    if (distanceEl && s.distanceMi != null) distanceEl.textContent = `${Number(s.distanceMi).toFixed(2)} mi`;
-
-    startEpochMs = Number(s.startEpochMs ?? 0);
-    lastTickEpochMs = Number(s.lastTickEpochMs ?? 0);
-
-    // complete badge: show only if control says complete OR you reached goalMiles (optional)
-    if (status === "complete") showComplete();
-    else hideComplete();
-
-    // markers depend on goalMiles
-    buildMileMarkers();
-  }, (err)=>{
-    console.log("OVERLAY V2 onValue ERROR:", err);
-  });
-}
-
-// Optional local start button for testing: writes a “start” to Firebase
-async function localStart(){
-  const now = Date.now();
-  await update(stateRef, {
-    status: "running",
-    startEpochMs: now,
-    lastTickEpochMs: now,
-    // You can keep existing totals if you want, or reset them:
-    // totalMiles: 0,
-    // totalCalories: 0,
-  });
-}
-
-window.addEventListener("load", ()=>{
-  buildMileMarkers();
-  attach();
-  tick();
-
-  if (localStartBtn){
-    localStartBtn.addEventListener("click", ()=>{
-      localStart().catch(e => console.log("localStart failed:", e));
-    });
+  if (status !== "running") {
+    lastTickMs = nowMs;
+    return;
   }
 
-  window.addEventListener("resize", ()=>{
-    buildMileMarkers();
-    renderRunner();
-  });
-});
+  if (!lastTickMs) lastTickMs = nowMs;
+  const dtMs = Math.max(0, nowMs - lastTickMs);
+  lastTickMs = nowMs;
+
+  // integrate time
+  elapsedMs += dtMs;
+
+  // integrate distance (mph -> miles per ms)
+  const milesThisTick = (speedMph * (dtMs / 3600000)); // 3,600,000 ms per hour
+  distanceMi += milesThisTick;
+
+  // integrate calories
+  const cpm = caloriesPerMile(inclinePct);
+  calories += milesThisTick * cpm;
+
+  render();
+
+  // persist totals back to Firebase every ~2 seconds while running
+  if (!lastPersistMs) lastPersistMs = nowMs;
+  if (nowMs - lastPersistMs >= 2000) {
+    lastPersistMs = nowMs;
+    const payload = {
+      // checkpoint data (for control panel display)
+      checkpoint: {
+        elapsedMs: Math.round(elapsedMs),
+        distanceMi: Number(distanceMi.toFixed(4)),
+        calories: Number(calories.toFixed(2)),
+        atEpochMs: Date.now()
+      }
+    };
+    update(stateRef, payload).catch(e => console.log("Persist failed:", e));
+  }
+}
+
+// Listen to control state
+onValue(stateRef, (snap) => {
+  const s = snap.val();
+  console.log("OVERLAY V2 STATE:", s);
+
+  if (!s) {
+    // If no state exists yet, create a default record once.
+    update(stateRef, {
+      status: "ready",
+      speedMph: 0,
+      inclinePct: 0,
+      checkpoint: { elapsedMs: 0, distanceMi: 0, calories: 0, atEpochMs: Date.now() }
+    }).catch(()=>{});
+    return;
+  }
+
+  // Read control values
+  status = String(s.status ?? "ready");
+  speedMph = Number(s.speedMph ?? 0);
+  inclinePct = Number(s.inclinePct ?? 0);
+
+  // If overlay gets reset command, zero out totals locally
+  if (s.command === "reset") {
+    elapsedMs = 0;
+    distanceMi = 0;
+    calories = 0;
+    lastTickMs = 0;
+    lastPersistMs = 0;
+
+    // acknowledge reset so it doesn't re-trigger
+    update(stateRef, { command: "" }).catch(()=>{});
+  }
+
+  // If the overlay is paused/resumed, do not “jump” dt
+  if (status !== "running") {
+    lastTickMs = 0;
+  }
+
+  if (debugEl) {
+    debugEl.textContent = `speed=${speedMph.toFixed(1)} incline=${inclinePct.toFixed(1)} dist=${distanceMi.toFixed(2)}mi`;
+  }
+
+  render();
+}, (err) => console.log("onValue error:", err));
+
+// start animation loop
+render();
+requestAnimationFrame(tick);
