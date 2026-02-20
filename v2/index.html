@@ -1,66 +1,39 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Run Overlay V2</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="dash layout-v3">
+<!-- LEFT: 2x2 stats grid -->
+<div class="left-grid">
 
-    <!-- TOP ROW: TIMER -->
-    <div class="timer-row">
-      <div class="timer-panel">
-        <div id="timeElapsed" class="big">00:00</div>
+  <!-- SPEED -->
+  <div class="panel cellbox">
+    <div class="metric-wrap">
+      <div class="emoji">🏃</div>
+      <div class="metric-value">
+        <span id="speed" class="num">0.0</span>
+        <div class="unit-below">MPH</div>
       </div>
     </div>
-
-    <!-- MAIN ROW: LEFT GRID + RIGHT VIDEO BOX -->
-    <div class="main-row">
-
-      <!-- LEFT: 2x2 stats grid -->
-      <div class="left-grid">
-        <div class="panel cellbox">
-          <div class="big">
-            <span id="speed" class="num">0.0</span><span class="unit">MPH</span>
-          </div>
-        </div>
-
-        <div class="panel cellbox">
-          <div class="big">
-            <span id="incline" class="num">0.0</span><span class="unit">%</span>
-          </div>
-        </div>
-
-        <div class="panel cellbox">
-          <div class="big">
-            <span id="calories" class="num">0</span>
-          </div>
-        </div>
-
-        <!-- HR area intentionally blank (Pulsoid goes over it) -->
-        <div class="panel cellbox hr-blank"></div>
-      </div>
-
-      <!-- RIGHT: EMPTY VIDEO PLACEHOLDER BOX -->
-      <div class="video-box" aria-label="Video placeholder">
-        <!-- leave empty; you’ll place your video feed over/inside this area in TikTok -->
-      </div>
-
-    </div>
-
-    <!-- Optional tiny footer (useful for debugging; hide later if you want) -->
-    <div class="tiny">
-      <span id="statusPill" class="pill">READY</span>
-      <span class="mono" id="debug"></span>
-    </div>
-
   </div>
 
-  <script type="module" src="script.js"></script>
-</body>
-</html>
+  <!-- INCLINE -->
+  <div class="panel cellbox">
+    <div class="metric-wrap">
+      <div class="emoji">⛰️</div>
+      <div class="metric-value">
+        <span id="incline" class="num">0.0</span>
+        <div class="unit-below">%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALORIES -->
+  <div class="panel cellbox">
+    <div class="metric-wrap">
+      <div class="emoji fire">🔥</div>
+      <div class="metric-value">
+        <span id="calories" class="num">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEART RATE (blank for Pulsoid overlay) -->
+  <div class="panel cellbox hr-blank"></div>
+
+</div>
