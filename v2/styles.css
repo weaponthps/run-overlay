@@ -218,3 +218,33 @@ html, body{
     filter: drop-shadow(0 0 10px rgba(255,120,0,0.35));
   }
 }
+
+/* ============================
+   BIG STREAM NUMBERS
+   ============================ */
+
+.metric-wrap{
+  display:flex;
+  align-items:center;
+  gap:32px;
+}
+
+/* the actual number (3.8 / 10.0 / 400 etc) */
+.metric-value .num{
+  font-size:140px;   /* ← MAIN SIZE CONTROL */
+  font-weight:900;
+  line-height:0.9;
+  letter-spacing:-2px;
+}
+
+/* MPH / % under number */
+.unit-below{
+  font-size:52px;
+  margin-top:10px;
+  opacity:0.9;
+}
+
+/* make emoji match size */
+.emoji{
+  font-size:120px;
+}
