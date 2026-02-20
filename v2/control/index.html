@@ -2,64 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Run Overlay V2</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Run Overlay V2 — Control</title>
+  <link rel="stylesheet" href="styles.css"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="dash">
-    <div class="panel top">
-      <div class="cell">
-        <div class="label">TIME ELAPSED</div>
-        <div id="timeElapsed" class="big">00:00</div>
+  <div class="wrap">
+    <h1>Run Overlay V2 — Control Panel</h1>
+
+    <div class="card">
+      <div class="row">
+        <div class="label">Status</div>
+        <div id="status" class="pill">--</div>
       </div>
 
-      <div class="divider"></div>
-
-      <div class="cell">
-        <div class="label">SPEED</div>
-        <div class="big">
-          <span id="speed" class="num">0.0</span><span class="unit">MPH</span>
+      <div class="grid">
+        <div class="panel">
+          <div class="label">Speed (mph)</div>
+          <div class="big">
+            <span id="speed">0.0</span>
+          </div>
+          <div class="btnrow">
+            <button data-speed="-0.1">- 0.1</button>
+            <button data-speed="+0.1">+ 0.1</button>
+            <button data-speed="-0.5">- 0.5</button>
+            <button data-speed="+0.5">+ 0.5</button>
+          </div>
         </div>
-      </div>
 
-      <div class="divider"></div>
+        <div class="panel">
+          <div class="label">Incline (%)</div>
+          <div class="big">
+            <span id="incline">0.0</span>
+          </div>
+          <div class="btnrow">
+            <button data-inc="-0.5">- 0.5</button>
+            <button data-inc="+0.5">+ 0.5</button>
+            <button data-inc="-1.0">- 1.0</button>
+            <button data-inc="+1.0">+ 1.0</button>
+          </div>
+        </div>
 
-      <div class="cell">
-        <div class="label">INCLINE</div>
-        <div class="big">
-          <span id="incline" class="num">0.0</span><span class="unit">%</span>
+        <div class="panel">
+          <div class="label">Checkpoint (from overlay)</div>
+          <div class="mono" id="cpTime">Time: --</div>
+          <div class="mono" id="cpDist">Distance: --</div>
+          <div class="mono" id="cpCal">Calories: --</div>
+          <div class="mono tiny">Overlay writes totals every ~2s while running.</div>
+        </div>
+
+        <div class="panel">
+          <div class="label">Run Controls</div>
+          <div class="btnrow">
+            <button id="startBtn">Start</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="resumeBtn">Resume</button>
+            <button id="resetBtn" class="danger">Reset</button>
+          </div>
+          <div class="mono tiny">Firebase path: <b>runOverlayV2/state</b></div>
         </div>
       </div>
     </div>
 
-    <div class="panel bottom">
-      <div class="cell">
-        <div class="label">CALORIES BURNT</div>
-        <div class="big">
-          <span id="calories" class="num">0</span>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="cell">
-        <div class="label">HEART RATE</div>
-        <div class="big hr">
-          <!-- Leave blank: you’ll overlay Pulsoid on top of/near this -->
-          <span id="hrSlot" class="num muted">--</span>
-          <span class="heart">❤</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="tiny">
-      <span id="statusPill" class="pill">READY</span>
-      <span class="mono" id="debug"></span>
-    </div>
+    <div class="mono" id="msg"></div>
   </div>
 
   <script type="module" src="script.js"></script>
