@@ -17,6 +17,69 @@ const firebaseConfig = {
 };
 // ===============================================
 
+const WEIGHT_LB = 160;
+
+// Calories per mile rule-of-thumb for running/walking:
+// ~0.63 * bodyweight (lb) per mile
+const CAL_PER_MILE = 0.63 * WEIGHT_LB; // 100.8 cal/mi at 160 lb
+
+let liveSpeedMph = 0;     // updated from Firebase
+let liveInclinePct = 0;   // updated from Firebase
+
+let running = false;
+let startEpochMs = 0;
+let pausedTotalMs = 0;
+let pauseStartedMs = 0;
+
+let rafId = null;
+
+function getElapsedSeconds() {
+  if (!startEpochMs) return 0;
+
+  const now = Date.now();
+
+  // if paused, don't count time since pause started
+  const pauseExtra = pauseStartedMs ? (now - pauseStartedMs) : 0;
+
+  const activeMs = (now - startEpochMs) - pausedTotalMs - pauseExtra;
+  return Math.max(0, activeMs / 1000);
+}
+
+// very simple incline multiplier (keeps things reasonable)
+function inclineFactor(pct) {
+  // 0% => 1.00
+  // 10% => 1.30  (noticeable but not insane)
+  return 1 + (Math.max(0, pct) * 0.03);
+}
+
+function computeDistanceMiles(elapsedSec, mph) {
+  return (mph * elapsedSec) / 3600;
+}
+
+function computeCalories(distanceMi, inclinePct) {
+  return distanceMi * CAL_PER_MILE * inclineFactor(inclinePct);
+}
+
+function tickLive() {
+  if (!running) return;
+
+  const elapsedSec = getElapsedSeconds();
+
+  const distMi = computeDistanceMiles(elapsedSec, liveSpeedMph);
+  const cals = computeCalories(distMi, liveInclinePct);
+
+  // Update whatever you display:
+  const distEl = document.getElementById("distNum"); // if you have it
+  if (distEl) distEl.textContent = distMi.toFixed(2);
+
+  if (calNumEl) calNumEl.textContent = String(Math.round(cals));
+
+  // If you have the auto-fit function:
+  if (calNumEl && calBox) fitNumberToBox(calNumEl, calBox, { max: 190, min: 80 });
+
+  rafId = requestAnimationFrame(tickLive);
+}
+
 // --- Model assumptions (you can tweak later) ---
 const USER_WEIGHT_LB = 160; // you asked to assume this
 // Calories model: very simple and stable for streaming:
@@ -197,6 +260,43 @@ onValue(stateRef, (snap) => {
     return;
   }
 
+  liveSpeedMph = Number(s.speedMph ?? 0);
+liveInclinePct = Number(s.inclinePct ?? 0);
+
+const status = String(s.status ?? "stopped");
+
+// Start
+if (status === "running" && !running) {
+  running = true;
+
+  // If you store a start time in Firebase, use it:
+  startEpochMs = Number(s.startEpochMs ?? Date.now());
+
+  pausedTotalMs = 0;
+  pauseStartedMs = 0;
+
+  cancelAnimationFrame(rafId);
+  rafId = requestAnimationFrame(tickLive);
+}
+
+// Pause
+if (status === "paused" && running && !pauseStartedMs) {
+  pauseStartedMs = Date.now();
+}
+
+// Resume
+if (status === "running" && running && pauseStartedMs) {
+  pausedTotalMs += (Date.now() - pauseStartedMs);
+  pauseStartedMs = 0;
+}
+
+// Stop/Reset
+if ((status === "stopped" || status === "ready") && running) {
+  running = false;
+  cancelAnimationFrame(rafId);
+  rafId = null;
+}
+  
   // Read control values
   status = String(s.status ?? "ready");
   speedMph = Number(s.speedMph ?? 0);
