@@ -2,11 +2,7 @@
   --bg: #111;
   --panel: #1b1b1b;
   --panel2:#191919;
-  --edge:#2b2b2b;
-  --line:#3a3a3a;
-
   --text:#f2f2f2;
-  --muted:#cfcfcf;
 }
 
 *{ box-sizing:border-box; }
@@ -62,9 +58,9 @@ html, body{
   flex-direction:column;
   justify-content:center;
   padding:22px 26px;
-  gap:10px;
 }
 
+/* divider line */
 .divider{
   width:8px;
   background:
@@ -72,17 +68,9 @@ html, body{
   opacity:0.8;
 }
 
-.label{
-  font-size:30px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  color:var(--text);
-  opacity:0.95;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.55);
-}
-
+/* BIG values only (no headers) */
 .big{
-  font-size:110px;
+  font-size:120px;
   font-weight:700;
   line-height:1;
   text-shadow: 0 6px 18px rgba(0,0,0,0.55);
@@ -91,27 +79,18 @@ html, body{
   gap:10px;
 }
 
-.big .num{ display:inline-block; }
 .big .unit{
-  font-size:44px;
+  font-size:46px;
   opacity:0.95;
   margin-left:4px;
 }
 
-.big.hr{
-  gap:18px;
-}
-.big .muted{
-  opacity:0.6;
+/* Make HR section fully blank */
+.hr-blank{
+  padding:0; /* clean empty box */
 }
 
-.heart{
-  font-size:86px;
-  color:#e11d2e;
-  text-shadow: 0 10px 26px rgba(0,0,0,0.55);
-  transform: translateY(6px);
-}
-
+/* footer bits (can keep during testing; hide later if you want) */
 .tiny{
   margin-top:14px;
   display:flex;
