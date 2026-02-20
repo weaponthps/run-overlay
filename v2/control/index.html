@@ -2,75 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Run Overlay V2 — Control Panel</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Run Overlay V2</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="wrap">
-    <h1>Run Overlay V2 — Control Panel</h1>
-
-    <div class="card">
-      <div class="row">
-        <div class="label">Status</div>
-        <div id="status" class="value pill">--</div>
+  <div class="dash">
+    <div class="panel top">
+      <div class="cell">
+        <div class="label">TIME ELAPSED</div>
+        <div id="timeElapsed" class="big">00:00</div>
       </div>
 
-      <div class="grid">
-        <div class="panel">
-          <div class="panel-title">Speed (mph)</div>
-          <div class="big" id="speedVal">--</div>
-          <div class="buttons">
-            <button id="speedDown">- 0.1</button>
-            <button id="speedUp">+ 0.1</button>
-          </div>
-          <div class="hint">Tip: Use 0.1 mph steps for “likes = speed up”.</div>
-        </div>
+      <div class="divider"></div>
 
-        <div class="panel">
-          <div class="panel-title">Incline (%)</div>
-          <div class="big" id="inclineVal">--</div>
-          <div class="buttons">
-            <button id="inclineDown">- 0.5</button>
-            <button id="inclineUp">+ 0.5</button>
-          </div>
-          <div class="hint">Tip: Use 0.5% steps for “follows = incline up”.</div>
+      <div class="cell">
+        <div class="label">SPEED</div>
+        <div class="big">
+          <span id="speed" class="num">0.0</span><span class="unit">MPH</span>
         </div>
       </div>
 
-      <div class="grid">
-        <div class="panel">
-          <div class="panel-title">Checkpoint (from overlay)</div>
-          <div class="two">
-            <div>
-              <div class="small-label">Distance</div>
-              <div class="mid" id="cpDistance">--</div>
-            </div>
-            <div>
-              <div class="small-label">Calories</div>
-              <div class="mid" id="cpCalories">--</div>
-            </div>
-          </div>
-          <div class="hint">Overlay saves these automatically every ~10s while running.</div>
-        </div>
+      <div class="divider"></div>
 
-        <div class="panel">
-          <div class="panel-title">Run Controls</div>
-          <div class="buttons">
-            <button id="startBtn" class="primary">Start</button>
-            <button id="stopBtn">Stop</button>
-            <button id="resetBtn" class="danger">Reset</button>
-          </div>
-          <div class="hint">
-            Start/Stop controls the overlay. Reset clears totals back to 0.
-          </div>
+      <div class="cell">
+        <div class="label">INCLINE</div>
+        <div class="big">
+          <span id="incline" class="num">0.0</span><span class="unit">%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel bottom">
+      <div class="cell">
+        <div class="label">CALORIES BURNT</div>
+        <div class="big">
+          <span id="calories" class="num">0</span>
         </div>
       </div>
 
-      <div class="footer">
-        <div class="mono">Firebase path: <span>runOverlayV2/state</span></div>
-        <div class="mono" id="msg"></div>
+      <div class="divider"></div>
+
+      <div class="cell">
+        <div class="label">HEART RATE</div>
+        <div class="big hr">
+          <!-- Leave blank: you’ll overlay Pulsoid on top of/near this -->
+          <span id="hrSlot" class="num muted">--</span>
+          <span class="heart">❤</span>
+        </div>
       </div>
+    </div>
+
+    <div class="tiny">
+      <span id="statusPill" class="pill">READY</span>
+      <span class="mono" id="debug"></span>
     </div>
   </div>
 
