@@ -25,37 +25,49 @@
       <!-- LEFT: 2x2 stats grid -->
 <div class="left-grid">
 
-  <!-- SPEED -->
-  <div class="panel cellbox">
-    <div class="metric-wrap">
-      <div class="emoji">🏃</div>
-      <div class="metric-value">
-        <span id="speed" class="num">0.0</span>
-        <div class="unit-below">MPH</div>
-      </div>
+  <!-- SPEED BOX -->
+<div class="box metric" id="speedBox">
+  <div class="metric-wrap">
+    <div class="emoji" aria-hidden="true">🏃</div>
+
+    <div class="metric-value">
+      <div class="num" id="speedNum">3.8</div>
+      <div class="unit-below" id="speedUnit">MPH</div>
+    </div>
+  </div>
+  <div class="meter">
+    <div class="meter-fill" id="speedMeterFill"></div>
+  </div>
+</div>
+
+<!-- INCLINE BOX -->
+<div class="box metric" id="inclineBox">
+  <div class="metric-wrap">
+    <div class="emoji" aria-hidden="true">⛰️</div>
+
+    <div class="metric-value">
+      <div class="num" id="inclineNum">10.0</div>
+      <div class="unit-below">%</div>
     </div>
   </div>
 
-  <!-- INCLINE -->
-  <div class="panel cellbox">
-    <div class="metric-wrap">
-      <div class="emoji">⛰️</div>
-      <div class="metric-value">
-        <span id="incline" class="num">0.0</span>
-        <div class="unit-below">%</div>
-      </div>
-    </div>
+  <!-- Incline Meter -->
+  <div class="meter">
+    <div class="meter-fill" id="inclineMeterFill"></div>
   </div>
+</div>
 
-  <!-- CALORIES -->
-  <div class="panel cellbox">
-    <div class="metric-wrap">
-      <div class="emoji fire">🔥</div>
-      <div class="metric-value">
-        <span id="calories" class="num">0</span>
-      </div>
+<!-- CALORIES BOX -->
+<div class="box metric" id="calBox">
+  <div class="metric-wrap">
+    <div class="emoji fire" aria-hidden="true">🔥</div>
+
+    <div class="metric-value">
+      <div class="num" id="calNum">0</div>
+      <div class="unit-below">cal</div>
     </div>
   </div>
+</div>
 
   <!-- HEART RATE (blank for Pulsoid overlay) -->
   <div class="panel cellbox hr-blank"></div>
