@@ -31,8 +31,69 @@ html, body{
     0 18px 60px rgba(0,0,0,0.55);
 }
 
-.panel{
+/* =========================
+   NEW LAYOUT (Timer row + main row)
+========================= */
+
+.layout-v3{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.timer-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.timer-panel{
+  width: min(920px, 92vw);
+  border-radius:18px;
+  overflow:hidden;
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    inset 0 0 0 2px rgba(0,0,0,0.35),
+    inset 0 12px 30px rgba(0,0,0,0.35);
+  padding: 22px 26px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.main-row{
+  flex:1;
   display:grid;
+  grid-template-columns: 1.05fr 0.95fr; /* left stats vs right video box */
+  gap:18px;
+  min-height:0; /* helps prevent overflow issues */
+}
+
+/* Left: 2x2 grid */
+.left-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap:18px;
+  min-height:0;
+}
+
+/* Right: empty video placeholder box */
+.video-box{
+  border-radius:18px;
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    inset 0 0 0 2px rgba(0,0,0,0.35),
+    inset 0 12px 30px rgba(0,0,0,0.35);
+}
+
+/* =========================
+   Panels + typography (same vibe)
+========================= */
+
+.panel{
   border-radius:18px;
   overflow:hidden;
   background: linear-gradient(180deg, var(--panel), var(--panel2));
@@ -42,30 +103,12 @@ html, body{
     inset 0 12px 30px rgba(0,0,0,0.35);
 }
 
-.panel.top{
-  grid-template-columns: 1fr 8px 1fr 8px 1fr;
-  height:46%;
-}
-
-.panel.bottom{
-  margin-top:18px;
-  grid-template-columns: 1fr 8px 1fr;
-  height:40%;
-}
-
-.cell{
+/* basic padded cell */
+.cellbox{
   display:flex;
-  flex-direction:column;
+  align-items:center;
   justify-content:center;
   padding:22px 26px;
-}
-
-/* divider line */
-.divider{
-  width:8px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.00), rgba(255,255,255,0.18), rgba(255,255,255,0.00));
-  opacity:0.8;
 }
 
 /* BIG values only (no headers) */
@@ -85,14 +128,13 @@ html, body{
   margin-left:4px;
 }
 
-/* Make HR section fully blank */
+/* HR section intentionally blank */
 .hr-blank{
-  padding:0; /* clean empty box */
+  padding:0;
 }
 
-/* footer bits (can keep during testing; hide later if you want) */
+/* footer bits (keep during testing; hide later if you want) */
 .tiny{
-  margin-top:14px;
   display:flex;
   gap:10px;
   align-items:center;
@@ -114,4 +156,20 @@ html, body{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   font-size:14px;
   opacity:0.7;
+}
+
+/* A little responsiveness so it still works if TikTok crops */
+@media (max-width: 900px){
+  .main-row{
+    grid-template-columns: 1fr;
+  }
+  .video-box{
+    min-height: 40vh;
+  }
+  .big{
+    font-size: 92px;
+  }
+  .big .unit{
+    font-size: 38px;
+  }
 }
