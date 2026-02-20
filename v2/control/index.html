@@ -26,11 +26,10 @@
             <span id="speed">0.0</span>
           </div>
           <div class="btnrow">
-            <button data-speed="-0.1">- 0.1</button>
-            <button data-speed="+0.1">+ 0.1</button>
-            <button data-speed="-0.5">- 0.5</button>
-            <button data-speed="+0.5">+ 0.5</button>
+            <button class="bigbtn" data-speed="-0.1">- 0.1</button>
+            <button class="bigbtn" data-speed="+0.1">+ 0.1</button>
           </div>
+          <div class="hint">Tip: 0.1 mph steps for “likes = speed up”.</div>
         </div>
 
         <div class="panel">
@@ -39,11 +38,10 @@
             <span id="incline">0.0</span>
           </div>
           <div class="btnrow">
-            <button data-inc="-0.5">- 0.5</button>
-            <button data-inc="+0.5">+ 0.5</button>
-            <button data-inc="-1.0">- 1.0</button>
-            <button data-inc="+1.0">+ 1.0</button>
+            <button class="bigbtn" data-inc="-1.0">- 1</button>
+            <button class="bigbtn" data-inc="+1.0">+ 1</button>
           </div>
+          <div class="hint">Tip: 1% steps for “follows = incline up”.</div>
         </div>
 
         <div class="panel">
@@ -56,11 +54,11 @@
 
         <div class="panel">
           <div class="label">Run Controls</div>
-          <div class="btnrow">
-            <button id="startBtn">Start</button>
-            <button id="pauseBtn">Pause</button>
-            <button id="resumeBtn">Resume</button>
-            <button id="resetBtn" class="danger">Reset</button>
+          <div class="btnrow controls">
+            <button class="bigbtn" id="startBtn">Start</button>
+            <button class="bigbtn" id="pauseBtn">Pause</button>
+            <button class="bigbtn" id="resumeBtn">Resume</button>
+            <button class="bigbtn danger" id="resetBtn">Reset</button>
           </div>
           <div class="mono tiny">Firebase path: <b>runOverlayV2/state</b></div>
         </div>
