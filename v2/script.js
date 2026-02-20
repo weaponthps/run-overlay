@@ -38,6 +38,17 @@ const calEl = document.getElementById("calories");
 const statusPill = document.getElementById("statusPill");
 const debugEl = document.getElementById("debug");
 
+const speedBox = document.getElementById("speedBox");
+const inclineBox = document.getElementById("inclineBox");
+const calBox = document.getElementById("calBox");
+
+const speedNumEl = document.getElementById("speedNum");
+const inclineNumEl = document.getElementById("inclineNum");
+const calNumEl = document.getElementById("calNum");
+
+const speedMeterFill = document.getElementById("speedMeterFill");
+const inclineMeterFill = document.getElementById("inclineMeterFill");
+
 // ========= STREAM UX HELPERS =========
 
 // Auto-fit the number to its container width (no libraries)
