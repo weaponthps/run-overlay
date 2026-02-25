@@ -1,22 +1,21 @@
-/* =========================
-   V2 DASHBOARD STYLES
-========================= */
-
 :root{
   --bg: #0b0b0b;
-  --panel: #151515;
-  --panel2: #101010;
+  --panelTop: #1a1a1a;
+  --panelBot: #0e0e0e;
+
   --stroke: rgba(255,255,255,0.08);
   --softStroke: rgba(255,255,255,0.05);
+
   --text: #f3f3f3;
-  --muted: rgba(255,255,255,0.75);
-  --accent: #35d0ff;
+  --muted: rgba(255,255,255,0.78);
+
   --green: #2ee68a;
+  --cyan: #35d0ff;
 }
 
 *{ box-sizing:border-box; }
 
-html,body{
+html, body{
   width:100%;
   height:100%;
   margin:0;
@@ -24,133 +23,155 @@ html,body{
   overflow:hidden;
   background:transparent;
   color:var(--text);
-  font-family: "Rowdies", system-ui, Arial, sans-serif;
+  font-family:"Rowdies", system-ui, Arial, sans-serif;
 }
 
-body{
-  background: transparent;
-}
-
-/* ===== overall container ===== */
+/* ===== Root container ===== */
 .dash{
   width:100vw;
   height:100vh;
   padding:18px;
+
   background:
     radial-gradient(1100px 700px at 30% 10%, rgba(255,255,255,0.08), transparent 60%),
     radial-gradient(900px 600px at 80% 40%, rgba(255,255,255,0.06), transparent 60%),
     linear-gradient(180deg, #0a0a0a, #050505);
-  border-radius: 18px;
+
+  border-radius:18px;
   overflow:hidden;
 }
 
-/* ===== layout rows ===== */
 .dash.layout-v3{
   display:flex;
   flex-direction:column;
   gap:14px;
+  min-height:0;
 }
 
-/* ===== timer row ===== */
+/* ===== Timer row ===== */
 .timer-row{
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
-.timer-pill{
+.timer-panel{
   width:min(920px, 92vw);
   height:120px;
-  border-radius:18px;
-  background: linear-gradient(180deg, rgba(25,25,25,0.92), rgba(10,10,10,0.92));
-  border: 1px solid var(--softStroke);
-  box-shadow: 0 14px 40px rgba(0,0,0,0.55) inset, 0 10px 30px rgba(0,0,0,0.45);
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  border-radius:18px;
+  background: linear-gradient(180deg, rgba(26,26,26,0.92), rgba(10,10,10,0.92));
+  border: 1px solid var(--softStroke);
+  box-shadow:
+    0 14px 40px rgba(0,0,0,0.55) inset,
+    0 10px 30px rgba(0,0,0,0.45);
 }
 
-#timeElapsed{
+#timeElapsed.big{
   font-size:120px;
-  letter-spacing: 2px;
-  text-shadow: 0 8px 30px rgba(0,0,0,0.65);
+  font-weight:900;
+  letter-spacing:2px;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.75);
 }
 
-/* ===== main row: left grid + right big box ===== */
+/* ===== Main row layout ===== */
 .main-row{
   display:grid;
-  grid-template-columns: 1.1fr 1.2fr; /* left stats area, right video box */
+  grid-template-columns: 1.08fr 1.22fr;
   gap:14px;
-  height: calc(100vh - 18px - 120px - 14px - 18px); /* fits under timer */
-  min-height: 0;
+
+  min-height:0;
+  height: calc(100vh - 18px - 120px - 14px - 18px); /* keeps main area fitting */
 }
 
-/* left side: 2x2 tiles */
+/* Left grid: 2x2 tiles */
 .left-grid{
   display:grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap:14px;
-  min-height: 0;
+  min-height:0;
 }
 
-/* general tile */
-.tile{
+/* Generic tile look */
+.box.metric,
+.panel.cellbox{
   position:relative;
   border-radius:18px;
-  background: linear-gradient(180deg, rgba(25,25,25,0.92), rgba(10,10,10,0.92));
+
+  background: linear-gradient(180deg, rgba(26,26,26,0.92), rgba(10,10,10,0.92));
   border: 1px solid var(--softStroke);
-  box-shadow: 0 14px 40px rgba(0,0,0,0.55) inset, 0 8px 20px rgba(0,0,0,0.35);
+
+  box-shadow:
+    0 14px 40px rgba(0,0,0,0.55) inset,
+    0 8px 20px rgba(0,0,0,0.35);
+
   padding: 18px 18px 16px 18px;
   overflow:hidden;
 }
 
-/* ---- IMPORTANT: remove the yellow zone outline on SPEED ---- */
-.tile.zone-walk,
-.tile.zone-jog,
-.tile.zone-run,
-.tile.zone-sprint{
+/* ===== Remove any special “zone” outline/glow on SPEED =====
+   If your JS adds classes like zone-walk/zone-run etc, this neutralizes them. */
+#speedBox.zone-walk,
+#speedBox.zone-jog,
+#speedBox.zone-run,
+#speedBox.zone-sprint{
   border: 1px solid var(--softStroke) !important;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.55) inset, 0 8px 20px rgba(0,0,0,0.35) !important;
+  box-shadow:
+    0 14px 40px rgba(0,0,0,0.55) inset,
+    0 8px 20px rgba(0,0,0,0.35) !important;
 }
 
-/* content positioning */
-.tile .row{
+/* Content layout inside a metric tile */
+.metric-wrap{
   display:flex;
   align-items:center;
-  gap:16px;
+  gap:18px;
   height: 100%;
 }
 
+/* Emoji */
 .emoji{
-  font-size:78px;
+  font-size:86px;
   line-height:1;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.55));
+  filter: drop-shadow(0 12px 22px rgba(0,0,0,0.60));
 }
 
-.num{
-  font-size:170px;
-  line-height: 0.95;
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.75);
-}
-
-.unit{
-  margin-top: 8px;
-  font-size:48px;
-  color: rgba(255,255,255,0.80);
-}
-
-/* stack number + unit for speed */
-.speed-stack{
+/* Bigger stat numbers */
+.metric-value{
   display:flex;
   flex-direction:column;
   align-items:flex-start;
   justify-content:center;
 }
 
-/* meters */
+.num{
+  font-size:190px;
+  font-weight:900;
+  line-height:0.92;
+  letter-spacing:1px;
+  text-shadow: 0 12px 34px rgba(0,0,0,0.80);
+}
+
+/* Unit below number (MPH / % / cal) */
+.unit-below{
+  margin-top: 10px;
+  font-size:56px;
+  font-weight:700;
+  color: rgba(255,255,255,0.80);
+  text-shadow: 0 8px 24px rgba(0,0,0,0.65);
+}
+
+/* ===== Remove % sign from incline box ===== */
+#inclineBox .unit-below{
+  display:none !important;
+}
+
+/* Meter bar */
 .meter{
   position:absolute;
   left:14px;
@@ -161,6 +182,7 @@ body{
   background: rgba(255,255,255,0.10);
   overflow:hidden;
 }
+
 .meter-fill{
   height:100%;
   width:0%;
@@ -169,78 +191,48 @@ body{
   box-shadow: 0 0 18px rgba(46,230,138,0.35);
 }
 
-/* =========================
-   SPECIFIC REQUESTED CHANGES
-========================= */
-
-/* 1) Remove % sign from incline tile (CSS-only) */
-.tile.incline .unit{
-  display:none !important;
-}
-
-/* 2) Keep calories tile as-is (no special changes needed) */
-
-/* 3) Heart rate open box: solid black, no outline */
-.tile.heart{
-  background: #000 !important;
-  border: none !important;
-  box-shadow: 0 16px 50px rgba(0,0,0,0.65) inset !important;
-}
-
-/* If you have any placeholder text inside heart tile, hide it */
-.tile.heart *{
-  opacity: 0;           /* keep layout but hide content */
-}
-
-/* 4) Right big box: square corners (90°) */
-.video-box{
-  border-radius: 0 !important;
-  background: linear-gradient(180deg, rgba(25,25,25,0.90), rgba(10,10,10,0.90));
-  border: 1px solid var(--softStroke);
-  box-shadow: 0 16px 50px rgba(0,0,0,0.60) inset, 0 10px 26px rgba(0,0,0,0.35);
-  overflow:hidden;
-}
-
-/* =========================
-   PULSING FIRE EMOJI
-========================= */
-@keyframes firePulse {
+/* ===== Calories fire pulse ===== */
+@keyframes firePulse{
   0%   { transform: scale(1); }
   50%  { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
-.tile.calories .emoji{
+
+.emoji.fire{
   animation: firePulse 1.8s ease-in-out infinite;
-  transform-origin: center;
+  transform-origin:center;
 }
 
-/* =========================
-   STATUS/DEBUG FOOTER
-========================= */
+/* ===== Heart Rate blank tile: solid black, no outline ===== */
+.panel.cellbox.hr-blank{
+  background:#000 !important;
+  border:none !important;
+  box-shadow: 0 16px 55px rgba(0,0,0,0.70) inset !important;
+  padding: 0 !important;
+}
 
-/* 5) Hide RUNNING + debug stats completely */
+/* ===== Right video placeholder: square corners ===== */
+.video-box{
+  border-radius:0 !important; /* 90-degree corners */
+  background: linear-gradient(180deg, rgba(26,26,26,0.90), rgba(10,10,10,0.90));
+  border: 1px solid var(--softStroke);
+  box-shadow:
+    0 16px 55px rgba(0,0,0,0.65) inset,
+    0 10px 26px rgba(0,0,0,0.35);
+  overflow:hidden;
+}
+
+/* ===== Hide the bottom status/debug bar ===== */
 .tiny{
   display:none !important;
 }
 
-/* If you’d rather “blend it in” instead of hiding, use this instead:
+/* If you ever want it subtle instead of hidden, replace the block above with:
 .tiny{
   position:absolute;
-  left:10px;
-  bottom:10px;
+  left:12px;
+  bottom:12px;
   opacity:0.08;
   transform: scale(0.85);
 }
 */
-
-/* =========================
-   CHANGE FLASH
-========================= */
-.changed{
-  animation: changedPop 420ms ease-out;
-}
-@keyframes changedPop{
-  0% { transform: scale(1); }
-  35% { transform: scale(1.03); }
-  100% { transform: scale(1); }
-}
