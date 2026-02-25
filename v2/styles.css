@@ -1,328 +1,246 @@
+/* =========================
+   V2 DASHBOARD STYLES
+========================= */
+
 :root{
-  --bg: #111;
-  --panel: #1b1b1b;
-  --panel2:#191919;
-  --text:#f2f2f2;
+  --bg: #0b0b0b;
+  --panel: #151515;
+  --panel2: #101010;
+  --stroke: rgba(255,255,255,0.08);
+  --softStroke: rgba(255,255,255,0.05);
+  --text: #f3f3f3;
+  --muted: rgba(255,255,255,0.75);
+  --accent: #35d0ff;
+  --green: #2ee68a;
 }
 
 *{ box-sizing:border-box; }
 
-html, body{
+html,body{
   width:100%;
   height:100%;
   margin:0;
   padding:0;
   overflow:hidden;
   background:transparent;
-  font-family:"Rowdies", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color:var(--text);
+  font-family: "Rowdies", system-ui, Arial, sans-serif;
 }
 
+body{
+  background: transparent;
+}
+
+/* ===== overall container ===== */
 .dash{
   width:100vw;
   height:100vh;
-  padding:24px;
-  border-radius:22px;
+  padding:18px;
   background:
-    radial-gradient(1400px 900px at 20% 20%, rgba(255,255,255,0.08), transparent 55%),
-    linear-gradient(180deg, #0e0e0e, #090909);
-  box-shadow:
-    inset 0 0 0 2px rgba(255,255,255,0.06),
-    0 18px 60px rgba(0,0,0,0.55);
+    radial-gradient(1100px 700px at 30% 10%, rgba(255,255,255,0.08), transparent 60%),
+    radial-gradient(900px 600px at 80% 40%, rgba(255,255,255,0.06), transparent 60%),
+    linear-gradient(180deg, #0a0a0a, #050505);
+  border-radius: 18px;
+  overflow:hidden;
 }
 
-/* =========================
-   NEW LAYOUT (Timer row + main row)
-========================= */
-
-.layout-v3{
+/* ===== layout rows ===== */
+.dash.layout-v3{
   display:flex;
   flex-direction:column;
-  gap:18px;
+  gap:14px;
 }
 
+/* ===== timer row ===== */
 .timer-row{
   display:flex;
   justify-content:center;
   align-items:center;
 }
 
-.timer-panel{
-  width: min(920px, 92vw);
+.timer-pill{
+  width:min(920px, 92vw);
+  height:120px;
   border-radius:18px;
-  overflow:hidden;
-  background: linear-gradient(180deg, var(--panel), var(--panel2));
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    inset 0 0 0 2px rgba(0,0,0,0.35),
-    inset 0 12px 30px rgba(0,0,0,0.35);
-  padding: 22px 26px;
+  background: linear-gradient(180deg, rgba(25,25,25,0.92), rgba(10,10,10,0.92));
+  border: 1px solid var(--softStroke);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55) inset, 0 10px 30px rgba(0,0,0,0.45);
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
 }
 
+#timeElapsed{
+  font-size:120px;
+  letter-spacing: 2px;
+  text-shadow: 0 8px 30px rgba(0,0,0,0.65);
+}
+
+/* ===== main row: left grid + right big box ===== */
 .main-row{
-  flex:1;
   display:grid;
-  grid-template-columns: 1.05fr 0.95fr; /* left stats vs right video box */
-  gap:18px;
-  min-height:0; /* helps prevent overflow issues */
+  grid-template-columns: 1.1fr 1.2fr; /* left stats area, right video box */
+  gap:14px;
+  height: calc(100vh - 18px - 120px - 14px - 18px); /* fits under timer */
+  min-height: 0;
 }
 
-/* Left: 2x2 grid */
+/* left side: 2x2 tiles */
 .left-grid{
   display:grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap:18px;
-  min-height:0;
+  gap:14px;
+  min-height: 0;
 }
 
-/* Right: empty video placeholder box */
-.video-box{
+/* general tile */
+.tile{
+  position:relative;
   border-radius:18px;
-  background: linear-gradient(180deg, var(--panel), var(--panel2));
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    inset 0 0 0 2px rgba(0,0,0,0.35),
-    inset 0 12px 30px rgba(0,0,0,0.35);
-}
-
-/* =========================
-   Panels + typography (same vibe)
-========================= */
-
-.panel{
-  border-radius:18px;
+  background: linear-gradient(180deg, rgba(25,25,25,0.92), rgba(10,10,10,0.92));
+  border: 1px solid var(--softStroke);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55) inset, 0 8px 20px rgba(0,0,0,0.35);
+  padding: 18px 18px 16px 18px;
   overflow:hidden;
-  background: linear-gradient(180deg, var(--panel), var(--panel2));
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:
-    inset 0 0 0 2px rgba(0,0,0,0.35),
-    inset 0 12px 30px rgba(0,0,0,0.35);
 }
 
-/* basic padded cell */
-.cellbox{
+/* ---- IMPORTANT: remove the yellow zone outline on SPEED ---- */
+.tile.zone-walk,
+.tile.zone-jog,
+.tile.zone-run,
+.tile.zone-sprint{
+  border: 1px solid var(--softStroke) !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55) inset, 0 8px 20px rgba(0,0,0,0.35) !important;
+}
+
+/* content positioning */
+.tile .row{
   display:flex;
   align-items:center;
-  justify-content:center;
-  padding:22px 26px;
+  gap:16px;
+  height: 100%;
 }
 
-/* BIG values only (no headers) */
-.big{
-  font-size:120px;
-  font-weight:700;
+.emoji{
+  font-size:78px;
   line-height:1;
-  text-shadow: 0 6px 18px rgba(0,0,0,0.55);
-  display:flex;
-  align-items:baseline;
-  gap:10px;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.55));
 }
 
-.big .unit{
-  font-size:46px;
-  opacity:0.95;
-  margin-left:4px;
+.num{
+  font-size:170px;
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.75);
 }
 
-/* HR section intentionally blank */
-.hr-blank{
-  padding:0;
+.unit{
+  margin-top: 8px;
+  font-size:48px;
+  color: rgba(255,255,255,0.80);
 }
 
-/* footer bits (keep during testing; hide later if you want) */
-.tiny{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-
-.pill{
-  display:inline-flex;
-  align-items:center;
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:20px;
-  border:1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.06);
-  text-transform:uppercase;
-  letter-spacing:1px;
-}
-
-.mono{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size:14px;
-  opacity:0.7;
-}
-
-/* A little responsiveness so it still works if TikTok crops */
-@media (max-width: 900px){
-  .main-row{
-    grid-template-columns: 1fr;
-  }
-  .video-box{
-    min-height: 40vh;
-  }
-  .big{
-    font-size: 92px;
-  }
-  .big .unit{
-    font-size: 38px;
-  }
-}
-
-.metric-wrap{
-  display:flex;
-  align-items:center;
-  gap:22px;
-}
-
-.metric-value{
+/* stack number + unit for speed */
+.speed-stack{
   display:flex;
   flex-direction:column;
   align-items:flex-start;
+  justify-content:center;
 }
 
-/* emoji size */
-.emoji{
-  font-size:82px;
-  line-height:1;
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
-}
-
-/* unit under number */
-.unit-below{
-  font-size:44px;
-  opacity:0.9;
-  margin-top:8px;
-}
-
-.fire{
-  animation: firePulse 2.2s ease-in-out infinite;
-}
-
-@keyframes firePulse{
-  0%{
-    transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(255,120,0,0.35));
-  }
-  50%{
-    transform: scale(1.18);
-    filter: drop-shadow(0 0 28px rgba(255,150,0,0.8));
-  }
-  100%{
-    transform: scale(1);
-    filter: drop-shadow(0 0 10px rgba(255,120,0,0.35));
-  }
-}
-
-/* ============================
-   BIG STREAM NUMBERS
-   ============================ */
-
-.metric-wrap{
-  display:flex;
-  align-items:center;
-  gap:32px;
-}
-
-/* the actual number (3.8 / 10.0 / 400 etc) */
-.metric-value .num{
-  font-size:140px;   /* ← MAIN SIZE CONTROL */
-  font-weight:900;
-  line-height:0.9;
-  letter-spacing:-2px;
-}
-
-/* MPH / % under number */
-.unit-below{
-  font-size:52px;
-  margin-top:10px;
-  opacity:0.9;
-}
-
-/* make emoji match size */
-.emoji{
-  font-size:120px;
-}
-
-/* ==========================================
-   V2 STREAM UPGRADES: autoscale, glow, zones
-   ========================================== */
-
-/* ---- Metric layout ---- */
-.metric-wrap{
-  display:flex;
-  align-items:center;
-  gap:28px;
-}
-
-/* BIG number baseline (JS will auto-fit it) */
-.metric-value .num{
-  font-weight:900;
-  line-height:0.9;
-  letter-spacing:-2px;
-  font-size:160px; /* starting point; JS will adjust */
-  text-shadow: 0 8px 28px rgba(0,0,0,0.45);
-}
-
-.unit-below{
-  font-size:56px;
-  margin-top:10px;
-  opacity:0.9;
-}
-
-.emoji{
-  font-size:120px;
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.45));
-}
-
-/* ---- Glow pop on change ---- */
-.metric.changed{
-  animation: glowPop 420ms ease-out;
-}
-@keyframes glowPop{
-  0%   { box-shadow: inset 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0); transform: scale(1); }
-  45%  { box-shadow: 0 0 26px rgba(120,210,255,0.38), 0 0 60px rgba(120,210,255,0.18); transform: scale(1.01); }
-  100% { box-shadow: inset 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0); transform: scale(1); }
-}
-
-/* ---- Speed zones: subtle accent ---- */
-#speedBox{
-  border: 2px solid rgba(255,255,255,0.10);
-}
-#speedBox.zone-walk { border-color: rgba(120,210,255,0.55); box-shadow: 0 0 20px rgba(120,210,255,0.20); }
-#speedBox.zone-jog  { border-color: rgba(24,255,136,0.55); box-shadow: 0 0 20px rgba(24,255,136,0.20); }
-#speedBox.zone-run  { border-color: rgba(255,210,90,0.60); box-shadow: 0 0 22px rgba(255,210,90,0.18); }
-#speedBox.zone-sprint{border-color: rgba(255,90,90,0.65);  box-shadow: 0 0 26px rgba(255,90,90,0.18); }
-
-/* ---- Meters ---- */
+/* meters */
 .meter{
-  margin-top:16px;
-  height:14px;
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  height:10px;
   border-radius:999px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.10);
   overflow:hidden;
-  border: 1px solid rgba(255,255,255,0.10);
 }
 .meter-fill{
   height:100%;
   width:0%;
   border-radius:999px;
-  background: linear-gradient(90deg, rgba(120,210,255,0.85), rgba(24,255,136,0.85));
-  box-shadow: 0 0 18px rgba(120,210,255,0.20);
-  transition: width 180ms linear;
+  background: linear-gradient(90deg, var(--green), rgba(53,208,255,0.95));
+  box-shadow: 0 0 18px rgba(46,230,138,0.35);
 }
 
-/* ---- Fire pulse ---- */
-.fire{
-  animation: firePulse 1.8s ease-in-out infinite;
-  transform-origin: 50% 70%;
+/* =========================
+   SPECIFIC REQUESTED CHANGES
+========================= */
+
+/* 1) Remove % sign from incline tile (CSS-only) */
+.tile.incline .unit{
+  display:none !important;
 }
-@keyframes firePulse{
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 10px 20px rgba(255,120,40,0.18)); }
-  50%      { transform: scale(1.06); filter: drop-shadow(0 16px 26px rgba(255,120,40,0.26)); }
+
+/* 2) Keep calories tile as-is (no special changes needed) */
+
+/* 3) Heart rate open box: solid black, no outline */
+.tile.heart{
+  background: #000 !important;
+  border: none !important;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.65) inset !important;
+}
+
+/* If you have any placeholder text inside heart tile, hide it */
+.tile.heart *{
+  opacity: 0;           /* keep layout but hide content */
+}
+
+/* 4) Right big box: square corners (90°) */
+.video-box{
+  border-radius: 0 !important;
+  background: linear-gradient(180deg, rgba(25,25,25,0.90), rgba(10,10,10,0.90));
+  border: 1px solid var(--softStroke);
+  box-shadow: 0 16px 50px rgba(0,0,0,0.60) inset, 0 10px 26px rgba(0,0,0,0.35);
+  overflow:hidden;
+}
+
+/* =========================
+   PULSING FIRE EMOJI
+========================= */
+@keyframes firePulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+.tile.calories .emoji{
+  animation: firePulse 1.8s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* =========================
+   STATUS/DEBUG FOOTER
+========================= */
+
+/* 5) Hide RUNNING + debug stats completely */
+.tiny{
+  display:none !important;
+}
+
+/* If you’d rather “blend it in” instead of hiding, use this instead:
+.tiny{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  opacity:0.08;
+  transform: scale(0.85);
+}
+*/
+
+/* =========================
+   CHANGE FLASH
+========================= */
+.changed{
+  animation: changedPop 420ms ease-out;
+}
+@keyframes changedPop{
+  0% { transform: scale(1); }
+  35% { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
