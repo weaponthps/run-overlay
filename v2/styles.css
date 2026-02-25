@@ -241,7 +241,7 @@ html, body{
 
 /* slightly smaller than speed */
 #inclineBox .num{
-  font-size: 150px;   /* was 190px */
+  font-size: 130px;   /* was 190px */
   transform: translateY(-10px); /* shift upward slightly */
 }
 
