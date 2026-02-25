@@ -240,10 +240,7 @@ html, body{
 /* ===== Better Incline Layout ===== */
 
 /* slightly smaller than speed */
-#inclineBox .num{
-  font-size: 130px;   /* was 190px */
-  transform: translateY(-10px); /* shift upward slightly */
-}
+
 
 /* label below number */
 #inclineBox .unit-below{
