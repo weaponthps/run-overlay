@@ -153,7 +153,7 @@ function renderUI() {
     const next = Number(speedMph).toFixed(1);
     if (speedNumEl.textContent !== next) popChanged(speedBox);
     speedNumEl.textContent = next;
-    fitNumberToBox(speedNumEl, speedBox, { max: 210, min: 90 });
+    // fitNumberToBox(speedNumEl, speedBox, { max: 210, min: 90 });
     setSpeedZone(speedBox, Number(speedMph));
     setMeter(speedMeterFill, Math.min(1, Number(speedMph) / 10));
   }
@@ -163,7 +163,7 @@ function renderUI() {
     const next = Number(inclinePct).toFixed(1);
     if (inclineNumEl.textContent !== next) popChanged(inclineBox);
     inclineNumEl.textContent = next;
-    fitNumberToBox(inclineNumEl, inclineBox, { max: 210, min: 90, targetPct: 0.70 });
+    // fitNumberToBox(inclineNumEl, inclineBox, { max: 210, min: 90, targetPct: 0.70 });
     setMeter(inclineMeterFill, Math.min(1, Number(inclinePct) / 15));
   }
 
@@ -172,7 +172,7 @@ function renderUI() {
     const next = String(Math.round(calories));
     if (calNumEl.textContent !== next) popChanged(calBox);
     calNumEl.textContent = next;
-    fitNumberToBox(calNumEl, calBox, { max: 220, min: 90, targetPct: 0.62 });
+    // fitNumberToBox(calNumEl, calBox, { max: 220, min: 90, targetPct: 0.62 });
   }
 
   setStatusPillText(status);
