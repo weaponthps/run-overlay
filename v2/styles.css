@@ -236,3 +236,20 @@ html, body{
   transform: scale(0.85);
 }
 */
+
+/* ===== Better Incline Layout ===== */
+
+/* slightly smaller than speed */
+#inclineBox .num{
+  font-size: 150px;   /* was 190px */
+  transform: translateY(-10px); /* shift upward slightly */
+}
+
+/* label below number */
+#inclineBox .unit-below{
+  display:block !important;
+  font-size:52px;
+  font-weight:700;
+  opacity:0.8;
+  margin-top:6px;
+}
